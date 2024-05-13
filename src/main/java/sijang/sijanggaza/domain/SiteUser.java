@@ -1,0 +1,25 @@
+package sijang.sijanggaza.domain;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Getter @Setter
+public class SiteUser {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    //원시타입인 int, long은 null 값을 가질 수 없음
+    //Wrapper 클래스인 Integer와 Long은 null 가능(JPA에서 권장)
+
+    @Column(unique = true)
+    private String username;
+
+    private String password;
+
+    @Column(unique = true)
+    private String email;
+
+}

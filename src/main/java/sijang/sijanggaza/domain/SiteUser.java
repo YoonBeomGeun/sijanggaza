@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter @Setter
 public class SiteUser {
@@ -22,4 +25,9 @@ public class SiteUser {
     @Column(unique = true)
     private String email;
 
+    @Enumerated(EnumType.STRING)
+    private UserStatus status; //회원 분류(CEO, USER)
+
+    @OneToMany(mappedBy = "siteUser")
+    private List<Order> orderList = new ArrayList<>();
 }

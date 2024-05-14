@@ -16,9 +16,11 @@ public class Order {
     @Column(name = "order_id")
     private Long id;
 
-    private SiteUser siteUser;
-
+    @ManyToOne
     private Item item;
+
+    @ManyToOne
+    private SiteUser siteUser;
 
     private LocalDateTime orderDate;
 

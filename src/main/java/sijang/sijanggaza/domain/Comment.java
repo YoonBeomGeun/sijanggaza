@@ -21,10 +21,10 @@ public class Comment {
 
     private LocalDateTime postDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Board board;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private SiteUser author;
 
     private LocalDateTime modifyDate;

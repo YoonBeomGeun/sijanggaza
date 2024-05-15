@@ -23,10 +23,10 @@ public class Item {
 
     private int stockQuantity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Board board;
 
-    @OneToMany(mappedBy = "item")
-    private List<Order> orderList = new ArrayList<>();
+    @OneToOne(mappedBy = "item", fetch = FetchType.LAZY)
+    private Order order;
 
 }

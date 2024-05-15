@@ -1,12 +1,15 @@
 package sijang.sijanggaza;
 
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import sijang.sijanggaza.domain.Board;
+import sijang.sijanggaza.domain.Comment;
 import sijang.sijanggaza.domain.SiteUser;
 import sijang.sijanggaza.domain.UserStatus;
 import sijang.sijanggaza.repository.BoardRepository;
+import sijang.sijanggaza.repository.CommentRepository;
 import sijang.sijanggaza.repository.UserRepository;
 
 import java.time.LocalDateTime;
@@ -21,6 +24,8 @@ class SijanggazaApplicationTests {
 
 	@Autowired
 	private BoardRepository boardRepository;
+	@Autowired
+	private CommentRepository commentRepository;
 	@Autowired
 	private UserRepository userRepository;
 
@@ -114,5 +119,40 @@ class SijanggazaApplicationTests {
 		this.boardRepository.delete(b);
 		assertEquals(1, this.boardRepository.count());
 	}
+	@Test
+	void 댓글저장() {
+		Optional<Board> ob = this.boardRepository.findById(2);
+		assertTrue(ob.isPresent());
+		Board b = ob.get();
+
+		Comment c = new Comment();
+		c.setContent("나도 최고");
+		c.setBoard(b);  // 어떤 질문의 답변인지 알기위해서 Question 객체가 필요하다.
+		c.setPostDate(LocalDateTime.now());
+		this.commentRepository.save(c);
+	}
+
+	@Test
+	void 댓글단건조회() {
+		Optional<Comment> oc = this.commentRepository.findById(1);
+		assertTrue(oc.isPresent());
+		Comment c = oc.get();
+		assertEquals(2, c.getBoard().getId());
+	}
+
+	@Test
+	@Transactional
+	void 댓글전체조회() {
+		Optional<Board> ob = this.boardRepository.findById(2);
+		assertTrue(ob.isPresent());
+		Board q = ob.get();
+
+		List<Comment> answerList = q.getCommentList();
+
+		assertEquals(1, answerList.size());
+		assertEquals("나도 최고", answerList.get(0).getContent());
+	}
+
+
 
 }

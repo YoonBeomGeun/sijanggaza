@@ -3,10 +3,7 @@ package sijang.sijanggaza.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import sijang.sijanggaza.domain.Board;
 import sijang.sijanggaza.repository.BoardRepository;
 import sijang.sijanggaza.service.BoardService;
@@ -32,5 +29,17 @@ public class BoardController {
         Board board = this.boardService.getBoard(id);
         model.addAttribute("board", board);
         return "board_detail";
+    }
+
+    @GetMapping("/create")
+    public String boardCreate() {
+        return "board_form";
+    }
+
+    @PostMapping("/create")
+    public String boardCreate(@RequestParam(value = "title") String title,
+                              @RequestParam(value = "content") String content) {
+        // TODO 질문을 저장한다.
+        return "redirect:/board/list";
     }
 }

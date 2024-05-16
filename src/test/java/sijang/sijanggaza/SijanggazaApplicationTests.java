@@ -11,6 +11,7 @@ import sijang.sijanggaza.domain.UserStatus;
 import sijang.sijanggaza.repository.BoardRepository;
 import sijang.sijanggaza.repository.CommentRepository;
 import sijang.sijanggaza.repository.UserRepository;
+import sijang.sijanggaza.service.BoardService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,6 +29,9 @@ class SijanggazaApplicationTests {
 	private CommentRepository commentRepository;
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private BoardService boardService;
 
 	@Test
 	void testJpa() {
@@ -54,14 +58,14 @@ class SijanggazaApplicationTests {
 		assertEquals("범근", user.getUsername());
 	}
 
-	@Test
+	/*@Test
 	void 사용자수정() {
 		Optional<SiteUser> os = this.userRepository.findById(1);
 		assertTrue(os.isPresent());
 		SiteUser user = os.get();
 		user.setStatus(UserStatus.USER);
 		this.userRepository.save(user);
-	}
+	}*/
 
 	@Test
 	void 보드리스트뽑기() {
@@ -153,6 +157,16 @@ class SijanggazaApplicationTests {
 		assertEquals("나도 최고", answerList.get(0).getContent());
 	}
 
+
+
+	@Test
+	void 테스트데이터생성() {
+		for(int i=1; i<=150; i++) {
+			String title = String.format("테스트 데이터 생성:[%03d]", i);
+			String content = "내용 없음";
+			this.boardService.create(title, content);
+		}
+	}
 
 
 }

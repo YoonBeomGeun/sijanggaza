@@ -164,7 +164,7 @@ class SijanggazaApplicationTests {
 		for(int i=1; i<=150; i++) {
 			String title = String.format("테스트 데이터 생성:[%03d]", i);
 			String content = "내용 없음";
-			this.boardService.create(title, content);
+			this.boardService.create(title, content, null);
 		}
 	}
 

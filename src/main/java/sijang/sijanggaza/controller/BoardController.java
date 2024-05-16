@@ -3,14 +3,18 @@ package sijang.sijanggaza.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import sijang.sijanggaza.domain.Board;
+import sijang.sijanggaza.domain.SiteUser;
 import sijang.sijanggaza.repository.BoardRepository;
 import sijang.sijanggaza.service.BoardService;
+import sijang.sijanggaza.service.UserService;
 
+import java.security.Principal;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -19,6 +23,7 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
+    private final UserService userService;
 
     @GetMapping("/list")
     public String list(@RequestParam(value ="page", defaultValue = "0") int page, Model model) {
@@ -34,17 +39,20 @@ public class BoardController {
         return "board_detail";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
     public String boardCreate(BoardForm boardForm) {
         return "board_form";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
-    public String boardCreate(@Valid BoardForm boardForm, BindingResult result) {
+    public String boardCreate(@Valid BoardForm boardForm, BindingResult result, Principal principal) {
         if(result.hasErrors()) {
             return "board_form";
         }
-        this.boardService.create(boardForm.getTitle(), boardForm.getContent());
+        SiteUser siteUser = this.userService.getUser(principal.getName());
+        this.boardService.create(boardForm.getTitle(), boardForm.getContent(), siteUser);
         return "redirect:/board/list";
     }
 

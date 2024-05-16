@@ -1,4 +1,4 @@
-<html layout:decorate="~{layout}" xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<html layout:decorate="~{layout}" xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
 <div layout:fragment="content" class="container my-3">
     <!-- 질문 -->
     <h2 class="border-bottom py-2" th:text="${board.title}"></h2>
@@ -7,6 +7,9 @@
             <div class="card-text" style="white-space: pre-line;" th:text="${board.content}"></div>
             <div class="d-flex justify-content-end">
                 <div class="badge bg-light text-dark p-2 text-start">
+                    <div class="mb-2">
+                        <span th:if="${board.author != null}" th:text="${board.author.username}"></span>
+                    </div>
                     <div th:text="${#temporals.format(board.postDate, 'yyyy-MM-dd HH:mm')}"></div>
                 </div>
             </div>
@@ -21,16 +24,20 @@
             <div class="card-text" style="white-space: pre-line;" th:text="${comment.content}"></div>
             <div class="d-flex justify-content-end">
                 <div class="badge bg-light text-dark p-2 text-start">
+                    <div class="mb-2">
+                        <span th:if="${comment.author != null}" th:text="${comment.author.username}"></span>
+                    </div>
                     <div th:text="${#temporals.format(comment.postDate, 'yyyy-MM-dd HH:mm')}"></div>
                 </div>
             </div>
         </div>
     </div>
     <!-- 답변 반복 끝  -->
-    <!-- 답변 작성 -->
+    <!-- 답변 작성(로그인 해야 가능) -->
     <form th:action="@{|/comment/create/${board.id}|}" th:object="${commentForm}" method="post" class="my-3">
         <div th:replace="~{form_errors :: formErrorsFragment}"></div>
-        <textarea th:field="*{content}" rows="10" class="form-control"></textarea>
+        <textarea sec:authorize="isAnonymous()" disabled th:field="*{content}" class="form-control" rows="10"></textarea>
+        <textarea sec:authorize="isAuthenticated()" th:field="*{content}" class="form-control" rows="10"></textarea>
         <input type="submit" value="댓글 등록" class="btn btn-primary my-2">
     </form>
 </div>

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sijang.sijanggaza.DataNotFoundException;
 import sijang.sijanggaza.domain.Board;
+import sijang.sijanggaza.domain.SiteUser;
 import sijang.sijanggaza.repository.BoardRepository;
 
 import java.time.LocalDateTime;
@@ -44,11 +45,12 @@ public class BoardService {
     }
 
     @Transactional
-    public void create(String title, String content) {
+    public void create(String title, String content, SiteUser user) {
         Board b = new Board();
         b.setTitle(title);
         b.setContent(content);
         b.setPostDate(LocalDateTime.now());
+        b.setAuthor(user);
         this.boardRepository.save(b);
     }
 

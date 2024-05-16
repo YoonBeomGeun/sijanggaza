@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class CommentService {
 
-    @Autowired
     private final CommentRepository commentRepository;
 
     public void create(Board board, String content) {

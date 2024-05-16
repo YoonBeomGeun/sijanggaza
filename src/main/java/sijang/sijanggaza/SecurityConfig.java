@@ -23,6 +23,9 @@ public class SecurityConfig {
                 .headers((headers) -> headers
                         .addHeaderWriter(new XFrameOptionsHeaderWriter(
                             XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))) //URL 요청 시 X-Frame-Options 헤더를 DENY 대신 SAMEORIGIN으로 설정
+                .formLogin((formLogin) -> formLogin //스프링 시큐리티의 로그인 설정을 담당
+                        .loginPage("/user/login") //로그인 페이지 URL
+                        .defaultSuccessUrl("/")) //로그인 성공 시
         ;
         return http.build();
     }

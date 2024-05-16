@@ -36,6 +36,7 @@ public class UserSecurityService implements UserDetailsService {
             authorities.add(new SimpleGrantedAuthority(UserRole.USER.getValue()));
         }
         return new User(siteUser.getUsername(), siteUser.getPassword(), authorities);
+        //스프링 시큐리티는 loadUserByUsername 메서드에 의해 리턴된 User 객체의 비밀번호가 사용자로부터 입력받은 비밀번호와 일치하는지 검사하는 기능을 내부에 가지고 있음.
     }
 
 }

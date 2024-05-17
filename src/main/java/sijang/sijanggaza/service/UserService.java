@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sijang.sijanggaza.DataNotFoundException;
 import sijang.sijanggaza.domain.SiteUser;
 import sijang.sijanggaza.domain.UserStatus;
@@ -19,6 +20,7 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     public SiteUser create(String username, String password, String email) {
         SiteUser user = new SiteUser();
         user.setUsername(username);

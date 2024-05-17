@@ -54,4 +54,22 @@ public class BoardService {
         this.boardRepository.save(b);
     }
 
+    @Transactional
+    public void modify(Board board, String title, String content) {
+        board.setTitle(title);
+        board.setContent(content);
+        board.setModifyDate(LocalDateTime.now());
+        this.boardRepository.save(board);
+    }
+
+    @Transactional
+    public void delete(Board board) {
+        this.boardRepository.delete(board);
+    }
+
+    public void ddabong(Board board, SiteUser siteUser) {
+        board.getDdabong().add(siteUser);
+        this.boardRepository.save(board);
+    }
+
 }

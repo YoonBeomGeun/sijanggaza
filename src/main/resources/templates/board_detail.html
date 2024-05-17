@@ -4,7 +4,7 @@
     <h2 class="border-bottom py-2" th:text="${board.title}"></h2>
     <div class="card my-3">
         <div class="card-body">
-            <div class="card-text" style="white-space: pre-line;" th:text="${board.content}"></div>
+            <div class="card-text" th:utext="${@commonUtil.markdown(board.content)}"></div> <!--th:text를 사용할 경우 HTML의 태그들이 이스케이프 처리되어 화면에 그대로 보임-->
             <div class="d-flex justify-content-end">
                 <div th:if="${board.modifyDate != null}" class="badge bg-light text-dark p-2 text-start mx-3">
                     <div class="mb-2">수정됨.</div>

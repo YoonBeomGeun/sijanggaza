@@ -20,13 +20,14 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public void create(Board board, String content, SiteUser author) {
+    public Comment create(Board board, String content, SiteUser author) {
         Comment comment = new Comment();
         comment.setContent(content);
         comment.setPostDate(LocalDateTime.now());
         comment.setBoard(board);
         comment.setAuthor(author);
         this.commentRepository.save(comment);
+        return comment;
     }
 
     public Comment getComment(Integer id) {

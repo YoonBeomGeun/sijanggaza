@@ -157,8 +157,6 @@ class SijanggazaApplicationTests {
 		assertEquals("나도 최고", answerList.get(0).getContent());
 	}
 
-
-
 	@Test
 	void 테스트데이터생성() {
 		for(int i=1; i<=150; i++) {
@@ -167,6 +165,8 @@ class SijanggazaApplicationTests {
 			this.boardService.create(title, content, null);
 		}
 	}
+
+	//TODO ddabong 추가
 
 
 }

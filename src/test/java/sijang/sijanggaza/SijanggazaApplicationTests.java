@@ -34,21 +34,6 @@ class SijanggazaApplicationTests {
 	private BoardService boardService;
 
 	@Test
-	void testJpa() {
-		Board b1 = new Board();
-		b1.setTitle("맛집 추천");
-		b1.setContent("맛집 추천해줘요");
-		b1.setPostDate(LocalDateTime.now());
-		this.boardRepository.save(b1);
-
-		Board b2 = new Board();
-		b2.setTitle("치킨");
-		b2.setContent("치킨 최고");
-		b2.setPostDate(LocalDateTime.now());
-		this.boardRepository.save(b2);
-	}
-
-	@Test
 	void 사용자등록() {
 		SiteUser user = new SiteUser();
 		user.setUsername("범근");
@@ -68,10 +53,24 @@ class SijanggazaApplicationTests {
 	}*/
 
 	@Test
+	void 게시글등록() {
+		Board b1 = new Board();
+		b1.setTitle("맛집 추천");
+		b1.setContent("맛집 추천해줘요");
+		b1.setPostDate(LocalDateTime.now());
+		this.boardRepository.save(b1);
+
+		Board b2 = new Board();
+		b2.setTitle("치킨");
+		b2.setContent("치킨 최고");
+		b2.setPostDate(LocalDateTime.now());
+		this.boardRepository.save(b2);
+	}
+
+	@Test
 	void 보드리스트뽑기() {
 		List<Board> all = this.boardRepository.findAll();
 		assertEquals(2, all.size());
-
 		Board b = all.get(0);
 		assertEquals("맛집 추천", b.getTitle());
 	}
@@ -123,9 +122,20 @@ class SijanggazaApplicationTests {
 		this.boardRepository.delete(b);
 		assertEquals(1, this.boardRepository.count());
 	}
+
+	@Test
+	void 게시글전체삭제() {
+		List<Board> all = this.boardRepository.findAll();
+		for(int i=0; i<all.size(); i++) {
+			Board board = all.get(i);
+			this.boardRepository.delete(board);
+		}
+	}
+
+
 	@Test
 	void 댓글저장() {
-		Optional<Board> ob = this.boardRepository.findById(2);
+		Optional<Board> ob = this.boardRepository.findById(190);
 		assertTrue(ob.isPresent());
 		Board b = ob.get();
 
@@ -138,10 +148,10 @@ class SijanggazaApplicationTests {
 
 	@Test
 	void 댓글단건조회() {
-		Optional<Comment> oc = this.commentRepository.findById(1);
+		Optional<Comment> oc = this.commentRepository.findById(12);
 		assertTrue(oc.isPresent());
 		Comment c = oc.get();
-		assertEquals(2, c.getBoard().getId());
+		assertEquals(190, c.getBoard().getId());
 	}
 
 	@Test
@@ -158,7 +168,7 @@ class SijanggazaApplicationTests {
 	}
 
 	@Test
-	void 테스트데이터생성() {
+	void 페이징테스트데이터생성() {
 		for(int i=1; i<=150; i++) {
 			String title = String.format("테스트 데이터 생성:[%03d]", i);
 			String content = "내용 없음";

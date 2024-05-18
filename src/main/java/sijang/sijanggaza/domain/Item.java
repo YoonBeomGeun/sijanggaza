@@ -23,10 +23,5 @@ public class Item {
 
     private int stockQuantity;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Board board;
-
-    @OneToOne(mappedBy = "item", fetch = FetchType.LAZY)
-    private Order order;
 
 }

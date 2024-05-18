@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "orders")
 @Getter
 @Setter
 public class Order {
@@ -28,4 +29,15 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status; //주문 상태(ORDER, CANCEL)
+
+
+    //==연관관계 메서드==//
+    public void setSiteUser(SiteUser siteUser) {
+        this.siteUser = siteUser;
+        siteUser.getOrderList().add(this);
+    }
+
+
+
+
 }

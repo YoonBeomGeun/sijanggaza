@@ -39,6 +39,7 @@ class SijanggazaApplicationTests {
 		user.setUsername("범근");
 		user.setPassword("1111");
 		user.setEmail("beomgeun@naver.com");
+		user.setStatus("USER");
 		this.userRepository.save(user);
 		assertEquals("범근", user.getUsername());
 	}
@@ -50,6 +51,11 @@ class SijanggazaApplicationTests {
 		SiteUser user = os.get();
 		user.setStatus(UserStatus.USER);
 		this.userRepository.save(user);
+	}*/
+
+	/*@Test
+	void 회원탈퇴() {
+
 	}*/
 
 	@Test

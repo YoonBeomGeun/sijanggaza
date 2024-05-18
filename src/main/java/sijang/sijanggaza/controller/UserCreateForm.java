@@ -2,6 +2,7 @@ package sijang.sijanggaza.controller;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,6 +25,7 @@ public class UserCreateForm {
     @Email
     private String email;
 
-    /*@NotEmpty
-    private UserStatus userStatus;*/
+    @NotNull(message = "회원 구분은 필수입니다.")
+    private String status;
+
 }

@@ -1,7 +1,9 @@
 package sijang.sijanggaza.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -25,8 +27,7 @@ public class SiteUser {
     @Column(unique = true)
     private String email;
 
-    @Enumerated(EnumType.STRING)
-    private UserStatus status; //회원 분류(CEO, USER)
+    private String status; //회원 분류(CEO, USER)
 
     @OneToMany(mappedBy = "siteUser")
     private List<Order> orderList = new ArrayList<>();

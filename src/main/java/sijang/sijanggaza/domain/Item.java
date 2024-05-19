@@ -17,7 +17,14 @@ public class Item {
     @Column(name = "item_id")
     private Long id;
 
+    @ManyToOne
+    private Board board;
+
+    @Column(length = 100)
     private String name;
+
+    @Column(columnDefinition = "TEXT")
+    private String content;
 
     private int price;
 

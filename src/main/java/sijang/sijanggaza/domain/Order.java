@@ -22,8 +22,8 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY)
     private SiteUser siteUser;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderItem> orderItems = new ArrayList<>();
+    private int orderPrice;
+    private int count;
 
     private LocalDateTime orderDate;
 

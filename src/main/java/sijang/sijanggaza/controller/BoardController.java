@@ -27,6 +27,7 @@ public class BoardController {
     private final BoardService boardService;
     private final UserService userService;
 
+    //소식 및 정보, 회원 유형 == USER
     @GetMapping("/list")
     public String list(@RequestParam(value ="page", defaultValue = "0") int page,
                        @RequestParam(value = "kw", defaultValue = "") String kw, Model model) {
@@ -36,6 +37,7 @@ public class BoardController {
         return "board_list";
     }
 
+    //상품존, 회원 유형 == CEO
     @GetMapping("/itemList")
     public String boardItemList(@RequestParam(value ="page", defaultValue = "0") int page,
                        @RequestParam(value = "kw", defaultValue = "") String kw, Model model) {
@@ -45,19 +47,33 @@ public class BoardController {
         return "board_itemList";
     }
 
+    //회원 유형 == USER, 게시글 보기
     @GetMapping(value = "/detail/{id}")
     public String detail(@PathVariable("id") Integer id, CommentForm commentForm, Model model) {
         Board board = this.boardService.getBoard(id);
+        System.out.println(board.toString());
         model.addAttribute("board", board);
         return "board_detail";
     }
 
+    //회원 유형 == CEO, 게시글 보기
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/itemDetail/{id}")
+    public String itemBoardDetail(@PathVariable("id") Integer id, CommentForm commentForm, Model model) {
+        Board board = this.boardService.getBoard(id);
+        System.out.println(board.toString());
+        model.addAttribute("board", board);
+        return "board_itemDetail";
+    }
+
+    //회원 유형 == USER, 게시글 작성
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
     public String boardCreate(BoardForm boardForm) {
         return "board_form";
     }
 
+    //회원 유형 == USER, 게시글 작성
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
     public String boardCreate(@Valid BoardForm boardForm, BindingResult result, Principal principal) {

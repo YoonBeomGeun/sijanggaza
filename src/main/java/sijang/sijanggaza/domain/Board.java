@@ -37,4 +37,17 @@ public class Board {
     @ManyToMany // 다대다로 생성 시, 새로운 테이블로 데이터 관리
     Set<SiteUser> ddabong;
 
+
+    @Override
+    public String toString() {
+        return "Board{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", postDate=" + postDate +
+                ", commentList=" + commentList +
+                ", author=" + author +
+                ", modifyDate=" + modifyDate +
+                '}';
+    }
 }

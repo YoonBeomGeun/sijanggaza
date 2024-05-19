@@ -31,13 +31,24 @@ public class BoardService {
     }
 
     //게시글 목록 페이징으로 불러오기
-    public Page<Board> getList(int page, String kw) {
+    //회원 유형 == USER
+    public Page<Board> getListOfUser(int page, String kw) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("postDate"));
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
         /*Specification<Board> spec = search(kw); // Specification 방법으로 검색
         return this.boardRepository.findAll(spec, pageable);*/
-        return this.boardRepository.findAllByKeyword(kw, pageable);
+        return this.boardRepository.findAllByKeywordOfUser(kw, pageable);
+    }
+
+    //회원 유형 == CEO
+    public Page<Board> getListOfCeo(int page, String kw) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("postDate"));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
+        /*Specification<Board> spec = search(kw); // Specification 방법으로 검색
+        return this.boardRepository.findAll(spec, pageable);*/
+        return this.boardRepository.findAllByKeywordOfCeo(kw, pageable);
     }
 
     public Board getBoard(Integer id) {

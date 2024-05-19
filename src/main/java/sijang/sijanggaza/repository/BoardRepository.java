@@ -25,17 +25,25 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
     Page<Board> findAll(Specification<Board> spec, Pageable pageable);
 
     @Query("select "
-            + "distinct b "
-            + "from Board b "
-            + "left outer join SiteUser u1 on b.author=u1 "
-            + "left outer join Comment c on c.board=b "
-            + "left outer join SiteUser u2 on c.author=u2 "
-            + "where "
-            + "   b.title like %:kw% "
-            + "   or b.content like %:kw% "
-            + "   or u1.username like %:kw% "
-            + "   or c.content like %:kw% "
-            + "   or u2.username like %:kw% ")
-    Page<Board> findAllByKeyword(@Param("kw") String kw, Pageable pageable);
+            + "distinct b"
+            + " from Board b"
+            + " left outer join SiteUser u1 on b.author=u1"
+            + " where"
+            + " u1.status = 'USER'"
+            + " and(b.title like %:kw%"
+            + " or b.content like %:kw%"
+            + " or u1.username like %:kw%)")
+    Page<Board> findAllByKeywordOfUser(@Param("kw") String kw, Pageable pageable);
+
+    @Query("select "
+            + "distinct b"
+            + " from Board b"
+            + " left outer join SiteUser u1 on b.author=u1"
+            + " where"
+            + " u1.status = 'CEO'"
+            + " and(b.title like %:kw%"
+            + " or b.content like %:kw%"
+            + " or u1.username like %:kw%)")
+    Page<Board> findAllByKeywordOfCeo(@Param("kw") String kw, Pageable pageable);
 
 }

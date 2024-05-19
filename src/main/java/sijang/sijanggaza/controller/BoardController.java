@@ -30,10 +30,19 @@ public class BoardController {
     @GetMapping("/list")
     public String list(@RequestParam(value ="page", defaultValue = "0") int page,
                        @RequestParam(value = "kw", defaultValue = "") String kw, Model model) {
-        Page<Board> paging = this.boardService.getList(page, kw);
+        Page<Board> paging = this.boardService.getListOfUser(page, kw);
         model.addAttribute("paging", paging);
         model.addAttribute("kw", kw);
         return "board_list";
+    }
+
+    @GetMapping("/itemList")
+    public String boardItemList(@RequestParam(value ="page", defaultValue = "0") int page,
+                       @RequestParam(value = "kw", defaultValue = "") String kw, Model model) {
+        Page<Board> paging = this.boardService.getListOfCeo(page, kw);
+        model.addAttribute("paging", paging);
+        model.addAttribute("kw", kw);
+        return "board_itemList";
     }
 
     @GetMapping(value = "/detail/{id}")

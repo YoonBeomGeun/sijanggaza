@@ -27,7 +27,8 @@ public class SiteUser {
     @Column(unique = true)
     private String email;
 
-    private String status; //회원 분류(CEO, USER)
+    @Enumerated(EnumType.STRING)
+    private UserStatus status; //회원 분류(CEO, USER)
 
     @OneToMany(mappedBy = "siteUser")
     private List<Order> orderList = new ArrayList<>();

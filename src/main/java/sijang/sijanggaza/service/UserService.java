@@ -21,7 +21,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public SiteUser create(String username, String password, String email, String status) {
+    public SiteUser create(String username, String password, String email, UserStatus status) {
         SiteUser user = new SiteUser();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password)); //Bean으로 등록한 PasswordEncoder 객체 사용

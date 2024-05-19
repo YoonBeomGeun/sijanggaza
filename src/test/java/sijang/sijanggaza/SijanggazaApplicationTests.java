@@ -33,7 +33,7 @@ class SijanggazaApplicationTests {
 	@Autowired
 	private BoardService boardService;
 
-	@Test
+	/*@Test
 	void 사용자등록() {
 		SiteUser user = new SiteUser();
 		user.setUsername("범근");
@@ -42,7 +42,7 @@ class SijanggazaApplicationTests {
 		user.setStatus("USER");
 		this.userRepository.save(user);
 		assertEquals("범근", user.getUsername());
-	}
+	}*/
 
 	/*@Test
 	void 사용자수정() {

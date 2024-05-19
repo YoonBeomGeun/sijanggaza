@@ -26,6 +26,6 @@ public class UserCreateForm {
     private String email;
 
     @NotNull(message = "회원 구분은 필수입니다.")
-    private String status;
+    private UserStatus status;
 
 }

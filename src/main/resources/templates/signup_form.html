@@ -24,8 +24,9 @@
             <input type="email" th:field="*{email}" class="form-control">
         </div>
         <div class="mb-3">
-            <label class="form-label">회원 구분</label>
+            <label class="form-label">회원 유형</label>
             <select th:field="*{status}" class="form-control">
+                <option value="">회원 유형을 선택해주세요.</option>
                 <option value="USER">일반 사용자</option>
                 <option value="CEO">사업자</option>
             </select>

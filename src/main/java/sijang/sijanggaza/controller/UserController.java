@@ -39,9 +39,10 @@ public class UserController {
         try {
             userService.create(userCreateForm.getUsername(), userCreateForm.getPassword1(),
                     userCreateForm.getEmail(), userCreateForm.getStatus());
+            System.out.println();
         } catch(DataIntegrityViolationException e) {
             e.printStackTrace();
-            result.reject("signupFailed", "이미 등록된 사용자입니다.");
+            result.reject("signupFailed", "이미 등록된 사용자입니다. 아이디나 이메일을 확인해주세요.");
             return "signup_form";
         } catch(Exception e) {
             e.printStackTrace();
@@ -49,7 +50,7 @@ public class UserController {
             return "signup_form";
         }
 
-        userService.create(userCreateForm.getUsername(), userCreateForm.getPassword1(), userCreateForm.getEmail(), userCreateForm.getStatus());
+        //userService.create(userCreateForm.getUsername(), userCreateForm.getPassword1(), userCreateForm.getEmail(), userCreateForm.getStatus());
         return "redirect:/";
     }
 

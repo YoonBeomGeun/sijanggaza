@@ -93,7 +93,7 @@ public class BoardController {
     //회원 유형 == CEO, 게시글 작성
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/itemCreate")
-    public String boardItemCreate(BoardForm boardForm, ItemBoardForm itemBoardForm, Principal principal, RedirectAttributes redirectAttributes) {
+    public String boardItemCreate(ItemBoardForm itemBoardForm, Principal principal, RedirectAttributes redirectAttributes) {
         SiteUser siteUser = this.userService.getUser(principal.getName());
         if(siteUser.getStatus() == UserStatus.CEO) {
             return "board_itemForm";
@@ -106,12 +106,12 @@ public class BoardController {
     //회원 유형 == CEO, 게시글 작성
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/itemCreate")
-    public String boardItemCreate(@Valid BoardForm boardForm, @Valid ItemBoardForm itemBoardForm, BindingResult result, Principal principal) {
+    public String boardItemCreate(@Valid ItemBoardForm itemBoardForm, BindingResult result, Principal principal) {
         if(result.hasErrors()) {
             return "board_itemForm";
         }
         SiteUser siteUser = this.userService.getUser(principal.getName());
-        Board board = this.boardService.itemBoardcreate(boardForm.getTitle(), boardForm.getContent(), siteUser);
+        Board board = this.boardService.itemBoardcreate(itemBoardForm.getTitle(), itemBoardForm.getContent(), siteUser);
         this.itemService.itemCreate(board, itemBoardForm.getName(), itemBoardForm.getPrice(), itemBoardForm.getStockquantity());
         return "redirect:/board/itemList";
     }

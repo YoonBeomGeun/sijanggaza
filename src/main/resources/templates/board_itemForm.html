@@ -14,15 +14,62 @@
             <textarea th:field="*{content}" class="form-control" rows="10"></textarea>
         </div>
         <!--상품 정보-->
-        <div class="mb-3">
+        <!--<div class="mb-3" style="">
             <label class="form-label">상품이름</label>
             <input type="text" th:field="*{name}" class="form-control">
             <label class="form-label">가격</label>
             <input type="number" th:field="*{price}" class="form-control">
             <label class="form-label">수량</label>
             <input type="number" th:field="*{stockquantity}" class="form-control">
+        </div>-->
+        <div class="mb-3" style="">
+            <label class="form-label">상품 등록</label>
+        </div>
+        <div id="items-container">
+            <div class="form-control mb-2">
+                <input type="text" th:field="*{items[0].name}" placeholder="상품이름을 입력해주세요." class="form-control mb-1">
+                <input type="number" th:field="*{items[0].price}" placeholder="가격을 입력해주세요." class="form-control mb-1">
+                <input type="number" th:field="*{items[0].stockquantity}" placeholder="수량을 입력해주세요." class="form-control mb-1">
+            </div>
+        </div>
+        <div class="mb-3">
+            <button id="add-button" type="button" class="btn btn-secondary">추가</button>
         </div>
         <input type="submit" value="등록하기" class="btn btn-primary my-2">
     </form>
 </div>
+
+<script layout:fragment="script" type='text/javascript'>
+document.addEventListener('DOMContentLoaded', function() {
+    let itemIndex = 1;
+
+    // 추가 버튼 클릭 시
+    document.getElementById('add-button').addEventListener('click', function() {
+        const newItemForm = document.createElement('div');
+        newItemForm.classList.add('form-control', 'mb-2');
+        newItemForm.innerHTML = `
+            <input type="text" name="items[${itemIndex}].name" placeholder="상품이름을 입력해주세요." class="form-control mb-1">
+            <input type="number" name="items[${itemIndex}].price" placeholder="가격을 입력해주세요." class="form-control mb-1">
+            <input type="number" name="items[${itemIndex}].stockquantity" placeholder="수량을 입력해주세요." class="form-control mb-1">
+            <button type="button" class="btn btn-danger delete-button">삭제</button>
+        `;
+        document.getElementById('items-container').appendChild(newItemForm);
+        itemIndex++;
+    });
+
+    // 삭제 버튼 클릭 시
+    document.getElementById('items-container').addEventListener('click', function(event) {
+        if (event.target.classList.contains('delete-button')) {
+            const itemForm = event.target.parentElement; // 삭제할 항목의 부모 요소
+            itemForm.remove(); // 삭제할 항목 제거
+
+            // 삭제된 항목의 인덱스 확인
+            const index = Array.from(itemForm.parentElement.children).indexOf(itemForm);
+
+            // 삭제된 항목의 인덱스에 해당하는 데이터 삭제
+            document.getElementsByName(`items[${index}]`).forEach(element => element.remove());
+        }
+    });
+});
+</script>
 </html>

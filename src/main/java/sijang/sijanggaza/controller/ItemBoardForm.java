@@ -1,11 +1,16 @@
 package sijang.sijanggaza.controller;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import sijang.sijanggaza.domain.Item;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,15 +23,22 @@ public class ItemBoardForm {
     @NotEmpty(message="내용은 필수입니다.")
     private String content;
 
-    @NotEmpty(message="상품이름은 필수입니다.")
-    @Size(max=200)
-    private String name;
+    @Valid
+    private List<ItemForm> items = new ArrayList<>();
 
-    @NotNull(message="가격은 필수입니다.")
-    private int price;
+    @Getter
+    @Setter
+    public static class ItemForm {
+        @NotEmpty(message="상품 이름은 필수입니다.")
+        @Size(max=200)
+        private String name;
 
-    @NotNull(message="수량은 필수입니다.")
-    @Min(value = 1, message = "수량은 최소 1개 이상이어야 합니다.")
-    private int stockquantity;
+        @NotNull(message="가격은 필수입니다.")
+        private int price;
+
+        @NotNull(message="수량은 필수입니다.")
+        @Min(value = 1, message = "수량은 1개 이상이어야 합니다.")
+        private int stockquantity;
+    }
 
 }

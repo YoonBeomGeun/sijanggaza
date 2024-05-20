@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sijang.sijanggaza.domain.Board;
+import sijang.sijanggaza.domain.Item;
 import sijang.sijanggaza.domain.SiteUser;
 import sijang.sijanggaza.domain.UserStatus;
 import sijang.sijanggaza.repository.BoardRepository;
@@ -112,7 +113,9 @@ public class BoardController {
         }
         SiteUser siteUser = this.userService.getUser(principal.getName());
         Board board = this.boardService.itemBoardcreate(itemBoardForm.getTitle(), itemBoardForm.getContent(), siteUser);
-        this.itemService.itemCreate(board, itemBoardForm.getName(), itemBoardForm.getPrice(), itemBoardForm.getStockquantity());
+        for (ItemBoardForm.ItemForm item : itemBoardForm.getItems()) {
+            this.itemService.itemCreate(board, item.getName(), item.getPrice(), item.getStockquantity());
+        }
         return "redirect:/board/itemList";
     }
 

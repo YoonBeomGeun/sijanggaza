@@ -71,6 +71,17 @@ public class BoardService {
     }
 
     @Transactional
+    public Board itemBoardcreate(String title, String content, SiteUser user) {
+        Board b = new Board();
+        b.setTitle(title);
+        b.setContent(content);
+        b.setPostDate(LocalDateTime.now());
+        b.setAuthor(user);
+        this.boardRepository.save(b);
+        return b;
+    }
+
+    @Transactional
     public void modify(Board board, String title, String content) {
         board.setTitle(title);
         board.setContent(content);

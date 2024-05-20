@@ -10,10 +10,13 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sijang.sijanggaza.domain.Board;
 import sijang.sijanggaza.domain.SiteUser;
+import sijang.sijanggaza.domain.UserStatus;
 import sijang.sijanggaza.repository.BoardRepository;
 import sijang.sijanggaza.service.BoardService;
+import sijang.sijanggaza.service.ItemService;
 import sijang.sijanggaza.service.UserService;
 
 import java.security.Principal;
@@ -26,6 +29,7 @@ public class BoardController {
 
     private final BoardService boardService;
     private final UserService userService;
+    private final ItemService itemService;
 
     //소식 및 정보, 회원 유형 == USER
     @GetMapping("/list")
@@ -85,6 +89,35 @@ public class BoardController {
         return "redirect:/board/list";
     }
 
+
+    //회원 유형 == CEO, 게시글 작성
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/itemCreate")
+    public String boardItemCreate(BoardForm boardForm, ItemBoardForm itemBoardForm, Principal principal, RedirectAttributes redirectAttributes) {
+        SiteUser siteUser = this.userService.getUser(principal.getName());
+        if(siteUser.getStatus() == UserStatus.CEO) {
+            return "board_itemForm";
+        } else {
+            redirectAttributes.addFlashAttribute("alertMessage", "상품존 게시글 작성권한이 없습니다.");
+            return "redirect:/board/itemList";
+        }
+    }
+
+    //회원 유형 == CEO, 게시글 작성
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/itemCreate")
+    public String boardItemCreate(@Valid BoardForm boardForm, @Valid ItemBoardForm itemBoardForm, BindingResult result, Principal principal) {
+        if(result.hasErrors()) {
+            return "board_itemForm";
+        }
+        SiteUser siteUser = this.userService.getUser(principal.getName());
+        Board board = this.boardService.itemBoardcreate(boardForm.getTitle(), boardForm.getContent(), siteUser);
+        this.itemService.itemCreate(board, itemBoardForm.getName(), itemBoardForm.getPrice(), itemBoardForm.getStockquantity());
+        return "redirect:/board/itemList";
+    }
+
+
+    //회원 유형 == USER, 게시글 수정
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{id}")
     public String boardModify(BoardForm boardForm, @PathVariable("id") Integer id, Principal principal) {
@@ -97,6 +130,8 @@ public class BoardController {
         return "board_form";
     }
 
+
+    //회원 유형 == USER, 게시글 수정
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{id}")
     public String boardModify(@Valid BoardForm boardForm, @PathVariable("id") Integer id,

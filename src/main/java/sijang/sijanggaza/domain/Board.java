@@ -29,6 +29,9 @@ public class Board {
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<Comment> commentList;
 
+    @OneToMany(mappedBy = "board")
+    private List<Item> itemList;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private SiteUser author;
 

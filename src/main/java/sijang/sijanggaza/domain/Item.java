@@ -23,8 +23,8 @@ public class Item {
     @Column(length = 100)
     private String name;
 
-    @Column(columnDefinition = "TEXT")
-    private String content;
+    /*@Column(columnDefinition = "TEXT")
+    private String content;*/
 
     private int price;
 

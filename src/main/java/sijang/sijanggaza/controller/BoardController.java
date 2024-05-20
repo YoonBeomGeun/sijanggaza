@@ -150,6 +150,7 @@ public class BoardController {
         return String.format("redirect:/board/detail/%s", id);
     }
 
+    //회원 유형 == USER, 게시글 삭제 / CEO 삭제는 CASCADE만 잘 설정해 주면 될 듯(필요시)
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{id}")
     public String boardDelete(@PathVariable("id") Integer id, Principal principal) {

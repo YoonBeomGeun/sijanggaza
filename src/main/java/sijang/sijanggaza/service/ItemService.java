@@ -47,4 +47,9 @@ public class ItemService {
         this.itemRepository.save(item);
         return item;
     }
+
+    @Transactional
+    public void delete(Item item) {
+        this.itemRepository.delete(item);
+    }
 }

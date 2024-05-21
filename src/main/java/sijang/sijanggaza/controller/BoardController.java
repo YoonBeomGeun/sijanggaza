@@ -150,7 +150,7 @@ public class BoardController {
         return String.format("redirect:/board/detail/%s", id);
     }
 
-    //회원 유형 == USER, 게시글 삭제 / CEO 삭제는 CASCADE만 잘 설정해 주면 될 듯(필요시)
+    //회원 유형 == USER, 게시글 삭제
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{id}")
     public String boardDelete(@PathVariable("id") Integer id, Principal principal) {
@@ -161,6 +161,19 @@ public class BoardController {
         this.boardService.delete(board);
         return "redirect:/";
     }
+
+    //회원 유형 == CEO, 게시글 삭제
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/itemDelete/{id}")
+    public String boardItemDelete(@PathVariable("id") Integer id, Principal principal) {
+        Board board = this.boardService.getBoard(id);
+        if(!board.getAuthor().getUsername().equals(principal.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
+        }
+        this.boardService.delete(board);
+        return "redirect:/board/itemList";
+    }
+
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/ddabong/{id}")

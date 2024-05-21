@@ -29,7 +29,7 @@ public class Board {
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<Comment> commentList;
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<Item> itemList;
 
     @ManyToOne(fetch = FetchType.LAZY)

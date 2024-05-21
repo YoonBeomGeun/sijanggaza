@@ -30,6 +30,10 @@ public class BoardService {
         return this.boardRepository.findAll();
     }
 
+    public void save(Board board) {
+        this.boardRepository.save(board);
+    }
+
     //게시글 목록 페이징으로 불러오기
     //회원 유형 == USER
     public Page<Board> getListOfUser(int page, String kw) {

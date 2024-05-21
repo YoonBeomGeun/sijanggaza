@@ -17,6 +17,16 @@
                     <div th:text="${#temporals.format(board.postDate, 'yyyy-MM-dd HH:mm')}"></div>
                 </div>
             </div>
+            <!-- 상품 갯수 표시 -->
+            <h5 class="border-bottom my-3 py-2"
+                th:text="|${#lists.size(board.itemList)}개의 상품이 등록되어 있습니다.|"></h5>
+            <div th:each="item : ${board.itemList}">
+                <div>
+                    <div th:text="${item.name}"></div>
+                    <div th:text="${item.price}"></div>
+                    <div th:text="${item.stockQuantity}"></div>
+                </div>
+            </div>
             <div class="my-3">
                 <a href="javascript:void(0);" class="recommend btn btn-sm btn-outline-secondary"
                    th:data-uri="@{|/board/ddabong/${board.id}|}">

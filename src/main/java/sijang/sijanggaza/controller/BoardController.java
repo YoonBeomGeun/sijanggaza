@@ -68,9 +68,12 @@ public class BoardController {
     public String itemBoardDetail(@PathVariable("id") Integer id, CommentForm commentForm, Model model) {
         Board board = this.boardService.getBoard(id);
         System.out.println(board.toString());
+        List<Item> items = this.itemService.getItem(board);
         model.addAttribute("board", board);
+        model.addAttribute("items", items);
         return "board_itemDetail";
     }
+
 
     //회원 유형 == USER, 게시글 작성
     @PreAuthorize("isAuthenticated()")
@@ -182,26 +185,27 @@ public class BoardController {
         if(!board.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
-
+        this.boardService.modify(board, itemBoardForm.getTitle(), itemBoardForm.getContent());
 
         List<Item> existingItems = this.itemService.getItem(board);  // 기존 아이템 리스트 가져오기
         List<Item> updatedItems = new ArrayList<>();
 
         int size = Math.max(existingItems.size(), itemBoardForm.getItems().size());
 
-        for (int i = 0; i < size; i++) {
+        for(int i=0; i<size; i++) {
             if (i < itemBoardForm.getItems().size()) {
                 ItemBoardForm.ItemForm itemForm = itemBoardForm.getItems().get(i);
+                System.out.println("저장된 아이템 = " + itemBoardForm.getItems().get(i).getName());
 
                 if (i < existingItems.size()) {
                     // 기존 아이템 업데이트
                     Item item = existingItems.get(i);
-                    Item newItem = this.itemService.itemModify(item, itemForm.getName(), itemForm.getPrice(), itemForm.getStockquantity());
-                    updatedItems.add(newItem);
+                    this.itemService.itemModify(item, itemForm.getName(), itemForm.getPrice(), itemForm.getStockquantity());
+                    updatedItems.add(item);
                 } else {
                     // 새로운 아이템 추가
-                    Item newItem = this.itemService.itemCreate(board, itemForm.getName(), itemForm.getPrice(), itemForm.getStockquantity());
-                    updatedItems.add(newItem);
+                    Item item = this.itemService.itemCreate(board, itemForm.getName(), itemForm.getPrice(), itemForm.getStockquantity());
+                    updatedItems.add(item);
                 }
             } else {
                 // 기존 아이템 삭제
@@ -209,9 +213,8 @@ public class BoardController {
                 this.itemService.itemDelete(item);
             }
         }
-
         board.setItemList(updatedItems);
-        this.boardService.modify(board, itemBoardForm.getTitle(), itemBoardForm.getContent());
+        this.boardService.save(board);
 
         return String.format("redirect:/board/itemDetail/%s", id);
     }
@@ -228,6 +231,7 @@ public class BoardController {
         this.boardService.delete(board);
         return "redirect:/";
     }
+
 
     //회원 유형 == CEO, 게시글 삭제
     @PreAuthorize("isAuthenticated()")

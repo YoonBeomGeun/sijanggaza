@@ -23,7 +23,7 @@
                     추천
                     <span class="badge rounded-pill bg-success" th:text="${#lists.size(board.ddabong)}"></span>
                 </a>
-                <a th:href="@{|/board/modify/${board.id}|}" class="btn btn-sm btn-outline-secondary"
+                <a th:href="@{|/board/itemModify/${board.id}|}" class="btn btn-sm btn-outline-secondary"
                    sec:authorize="isAuthenticated()"
                    th:if="${board.author != null and #authentication.getPrincipal().getUsername() == board.author.username}"
                    th:text="수정"></a>

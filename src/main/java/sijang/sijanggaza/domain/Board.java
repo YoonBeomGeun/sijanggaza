@@ -49,8 +49,10 @@ public class Board {
                 ", content='" + content + '\'' +
                 ", postDate=" + postDate +
                 ", commentList=" + commentList +
+                ", itemList=" + itemList +
                 ", author=" + author +
                 ", modifyDate=" + modifyDate +
+                ", ddabong=" + ddabong +
                 '}';
     }
 }

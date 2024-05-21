@@ -21,6 +21,7 @@ import sijang.sijanggaza.service.ItemService;
 import sijang.sijanggaza.service.UserService;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -149,6 +150,72 @@ public class BoardController {
         this.boardService.modify(board, boardForm.getTitle(), boardForm.getContent());
         return String.format("redirect:/board/detail/%s", id);
     }
+
+
+    //회원 유형 == CEO, 게시글 수정
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/itemModify/{id}")
+    public String boardItemModify(ItemBoardForm itemBoardForm, @PathVariable("id") Integer id, Principal principal) {
+        Board board = this.boardService.getBoard(id);
+        if(!board.getAuthor().getUsername().equals(principal.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
+        }
+        itemBoardForm.setTitle(board.getTitle());
+        itemBoardForm.setContent(board.getContent());
+        List<Item> items = board.getItemList();
+        System.out.println("아이템 리스트의 크기 = " + items.size());
+        itemBoardForm.setItems(ItemBoardForm.fromItems(items));
+
+        return "board_itemForm";
+    }
+
+
+    //회원 유형 == CEO, 게시글 수정
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/itemModify/{id}")
+    public String boardItemModify(@Valid ItemBoardForm itemBoardForm, @PathVariable("id") Integer id,
+                                  BindingResult result, Principal principal) {
+        if(result.hasErrors()) {
+            return "board_form";
+        }
+        Board board = this.boardService.getBoard(id);
+        if(!board.getAuthor().getUsername().equals(principal.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
+        }
+
+
+        List<Item> existingItems = this.itemService.getItem(board);  // 기존 아이템 리스트 가져오기
+        List<Item> updatedItems = new ArrayList<>();
+
+        int size = Math.max(existingItems.size(), itemBoardForm.getItems().size());
+
+        for (int i = 0; i < size; i++) {
+            if (i < itemBoardForm.getItems().size()) {
+                ItemBoardForm.ItemForm itemForm = itemBoardForm.getItems().get(i);
+
+                if (i < existingItems.size()) {
+                    // 기존 아이템 업데이트
+                    Item item = existingItems.get(i);
+                    Item newItem = this.itemService.itemModify(item, itemForm.getName(), itemForm.getPrice(), itemForm.getStockquantity());
+                    updatedItems.add(newItem);
+                } else {
+                    // 새로운 아이템 추가
+                    Item newItem = this.itemService.itemCreate(board, itemForm.getName(), itemForm.getPrice(), itemForm.getStockquantity());
+                    updatedItems.add(newItem);
+                }
+            } else {
+                // 기존 아이템 삭제
+                Item item = existingItems.get(i);
+                this.itemService.itemDelete(item);
+            }
+        }
+
+        board.setItemList(updatedItems);
+        this.boardService.modify(board, itemBoardForm.getTitle(), itemBoardForm.getContent());
+
+        return String.format("redirect:/board/itemDetail/%s", id);
+    }
+
 
     //회원 유형 == USER, 게시글 삭제
     @PreAuthorize("isAuthenticated()")

@@ -17,16 +17,32 @@
                     <div th:text="${#temporals.format(board.postDate, 'yyyy-MM-dd HH:mm')}"></div>
                 </div>
             </div>
+            <br>
+
             <!-- 상품 갯수 표시 -->
-            <h5 class="border-bottom my-3 py-2"
-                th:text="|${#lists.size(board.itemList)}개의 상품이 등록되어 있습니다.|"></h5>
-            <div th:each="item : ${board.itemList}">
-                <div>
-                    <div th:text="${item.name}"></div>
-                    <div th:text="${item.price}"></div>
-                    <div th:text="${item.stockQuantity}"></div>
-                </div>
+            <p class="border-bottom my-3 py-2" style="font-size: 1.1em; font-weight:550;"
+                th:text="|${#lists.size(board.itemList)}개의 상품이 등록되어 있습니다.|"></p>
+
+            <div class="card my-3" style="width:80%; margin: 0 auto;">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                    <tr class="text-center">
+                        <th style="width:50%">상품명</th>
+                        <th>가격</th>
+                        <th>수량</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="text-center" th:each="item : ${board.itemList}">
+                        <td th:text="${item.name}"></td>
+                        <td th:text="${item.price}"></td>
+                        <td th:text="${item.stockQuantity}"></td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
+            <br>
+
             <div class="my-3">
                 <a href="javascript:void(0);" class="recommend btn btn-sm btn-outline-secondary"
                    th:data-uri="@{|/board/ddabong/${board.id}|}">
@@ -44,6 +60,50 @@
             </div>
         </div>
     </div>
+
+    <!--주문 하기-->
+    <div class="card my-3">
+        <form role="form" action="" method="post">
+            <div class="form-group">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                    <tr class="text-center">
+                        <th style="width:70%">상품명</th>
+                        <th>수량</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="text-center">
+                        <td>
+                            <select class="form-control">
+                                <option value="">상품 선택</option>
+                                <option th:each="item : ${board.itemList}"
+                                        th:value="${item.id}"
+                                        th:text="${item.name}" />
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" name="count" class="form-control" placeholder="주문 수량을 입력하세요.">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <!--<label for="member">상품명</label>
+                <select name="memberId" id="member" class="form-control">
+                    <option value="">상품 선택</option>
+                    <option th:each="item : ${board.itemList}"
+                            th:value="${item.id}"
+                            th:text="${item.name}" />
+                </select>
+
+                <label for="count">주문수량</label>
+                <input type="number" name="count" class="form-control" id="count" placeholder="주문 수량을 입력하세요.">-->
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
     <!-- 답변의 갯수 표시 -->
     <h5 class="border-bottom my-3 py-2"
         th:text="|${#lists.size(board.commentList)}개의 답변이 있습니다.|"></h5>

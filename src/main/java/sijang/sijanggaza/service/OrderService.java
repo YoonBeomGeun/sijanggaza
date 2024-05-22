@@ -3,10 +3,7 @@ package sijang.sijanggaza.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sijang.sijanggaza.domain.Item;
-import sijang.sijanggaza.domain.Order;
-import sijang.sijanggaza.domain.OrderStatus;
-import sijang.sijanggaza.domain.SiteUser;
+import sijang.sijanggaza.domain.*;
 import sijang.sijanggaza.repository.ItemRepository;
 import sijang.sijanggaza.repository.OrderRepository;
 import sijang.sijanggaza.repository.UserRepository;
@@ -23,11 +20,9 @@ public class OrderService {
     private final ItemRepository itemRepository;
 
     @Transactional
-    public void create(String username, Integer id, int count) {
+    public void create(String username, Item item, int count) {
         Optional<SiteUser> os = this.userRepository.findByusername(username);
         SiteUser user = os.get();
-        Optional<Item> oi = this.itemRepository.findById(id);
-        Item item = oi.get();
 
         Order order = new Order();
         order.setName(item.getName());
@@ -36,5 +31,10 @@ public class OrderService {
         order.setCount(count);
         order.setOrderDate(LocalDateTime.now());
         order.setStatus(OrderStatus.ORDER);
+    }
+
+    public Item selectedItem(Board board, String name) {
+        Item item = this.itemRepository.findByBoardAndName(board, name);
+        return item;
     }
 }

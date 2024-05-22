@@ -63,7 +63,7 @@
 
     <!--주문 하기-->
     <div class="card my-3" style="width:80%; margin: 0 auto;">
-        <form role="form" action="" method="post">
+        <form role="form" th:action="@{|/createOrder/${board.id}|}" th:object="${orderForm}" method="post">
             <table class="table table-hover">
                 <thead class="table-light">
                     <tr class="text-center">
@@ -77,12 +77,12 @@
                             <select class="form-control">
                                 <option value="">상품 선택</option>
                                 <option th:each="item : ${board.itemList}"
-                                        th:value="${item.id}"
+                                        th:value="${item.id}" th:field="*{name}"
                                         th:text="${item.name}" />
                             </select>
                         </td>
                         <td>
-                            <input type="number" name="count" class="form-control" placeholder="주문 수량을 입력하세요.">
+                            <input type="number" th:field="*{count}" class="form-control" placeholder="주문 수량을 입력하세요.">
                         </td>
                     </tr>
                 </tbody>

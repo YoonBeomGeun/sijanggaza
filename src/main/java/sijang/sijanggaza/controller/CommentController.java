@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import sijang.sijanggaza.domain.Board;
 import sijang.sijanggaza.domain.Comment;
 import sijang.sijanggaza.domain.SiteUser;
+import sijang.sijanggaza.domain.UserStatus;
 import sijang.sijanggaza.service.BoardService;
 import sijang.sijanggaza.service.CommentService;
 import sijang.sijanggaza.service.UserService;
@@ -28,6 +29,9 @@ public class CommentController {
     private final CommentService commentService;
     private final UserService userService;
 
+    /**
+     * 댓글 생성
+     */
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create/{id}")
     public String createComment(@PathVariable("id") Integer id, @Valid CommentForm commentForm,
@@ -36,12 +40,20 @@ public class CommentController {
         SiteUser siteUser = this.userService.getUser(principal.getName());
         if(result.hasErrors()) {
             model.addAttribute("board", board);
-            return "board_detail";
+            return "board_itemDetail";
         }
         Comment comment = this.commentService.create(board, commentForm.getContent(), siteUser);
-        return String.format("redirect:/board/detail/%s#comment_%s", comment.getBoard().getId(), comment.getId());
+        
+        if(board.getAuthor().getStatus() == UserStatus.CEO && board.getItemList().size()>=1) {
+            return String.format("redirect:/board/itemDetail/%s#comment_%s", comment.getBoard().getId(), comment.getId());
+        } else {
+            return String.format("redirect:/board/detail/%s#comment_%s", comment.getBoard().getId(), comment.getId());
+        }
     }
 
+    /**
+     * 댓글 수정
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{id}")
     public String modifyComment(CommentForm commentForm, @PathVariable("id") Integer id, Principal principal) {
@@ -61,31 +73,55 @@ public class CommentController {
             return "comment_form";
         }
         Comment comment = this.commentService.getComment(id);
+        Board board = this.boardService.getBoard(Math.toIntExact(comment.getBoard().getId()));
         if(!comment.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
         this.commentService.modify(comment, commentForm.getContent());
-        return String.format("redirect:/board/detail/%s#comment_%s", comment.getBoard().getId(), comment.getId());
+        
+        if(board.getAuthor().getStatus() == UserStatus.CEO && board.getItemList().size()>=1) {
+            return String.format("redirect:/board/itemDetail/%s#comment_%s", comment.getBoard().getId(), comment.getId());
+        } else {
+            return String.format("redirect:/board/detail/%s#comment_%s", comment.getBoard().getId(), comment.getId());
+        }
     }
 
+    /**
+     * 댓글 삭제
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{id}")
     public String deleteComment(@PathVariable("id") Integer id, Principal principal) {
         Comment comment = this.commentService.getComment(id);
+        Board board = this.boardService.getBoard(Math.toIntExact(comment.getBoard().getId()));
         if(!comment.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
         }
         this.commentService.delete(comment);
-        return String.format("redirect:/board/detail/%s", comment.getBoard().getId());
+        
+        if(board.getAuthor().getStatus() == UserStatus.CEO && board.getItemList().size()>=1) {
+            return String.format("redirect:/board/itemDetail/%s", comment.getBoard().getId());
+        } else {
+            return String.format("redirect:/board/detail/%s", comment.getBoard().getId());
+        }
     }
 
+    /**
+     * 댓글 추천
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/ddabong/{id}")
     public String commentDdabong(@PathVariable("id") Integer id, Principal principal) {
         Comment comment = this.commentService.getComment(id);
         SiteUser siteUser = this.userService.getUser(principal.getName());
+        Board board = this.boardService.getBoard(Math.toIntExact(comment.getBoard().getId()));
         this.commentService.ddabong(comment, siteUser);
-        return String.format("redirect:/board/detail/%s#comment_%s", comment.getBoard().getId(), comment.getId());
+        
+        if(board.getAuthor().getStatus() == UserStatus.CEO && board.getItemList().size()>=1) {
+            return String.format("redirect:/board/itemDetail/%s#comment_%s", comment.getBoard().getId(), comment.getId());
+        } else {
+            return String.format("redirect:/board/detail/%s#comment_%s", comment.getBoard().getId(), comment.getId());
+        }
     }
 
 }

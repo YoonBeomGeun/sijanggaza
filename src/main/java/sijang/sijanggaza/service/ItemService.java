@@ -65,9 +65,22 @@ public class ItemService {
         return updatedItem;
     }
 
-
     @Transactional
     public void itemDelete(Item item) {
         this.itemRepository.delete(item);
+    }
+
+    /**
+     * stock 증가
+     */
+    public void addStock(int quantity) {
+
+    }
+
+    /**
+     * stock 감소
+     */
+    public void removeStock(int quantity) {
+
     }
 }

@@ -4,15 +4,15 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import sijang.sijanggaza.domain.Board;
-import sijang.sijanggaza.domain.Comment;
-import sijang.sijanggaza.domain.SiteUser;
-import sijang.sijanggaza.domain.UserStatus;
+import sijang.sijanggaza.domain.*;
 import sijang.sijanggaza.repository.BoardRepository;
 import sijang.sijanggaza.repository.CommentRepository;
+import sijang.sijanggaza.repository.OrderRepository;
 import sijang.sijanggaza.repository.UserRepository;
 import sijang.sijanggaza.service.BoardService;
+import sijang.sijanggaza.service.OrderService;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -32,17 +32,37 @@ class SijanggazaApplicationTests {
 
 	@Autowired
 	private BoardService boardService;
+	@Autowired
+	private OrderService orderService;
+	@Autowired
+	private OrderRepository orderRepository;
 
-	/*@Test
+	@Test
 	void 사용자등록() {
-		SiteUser user = new SiteUser();
-		user.setUsername("범근");
-		user.setPassword("1111");
-		user.setEmail("beomgeun@naver.com");
-		user.setStatus("USER");
-		this.userRepository.save(user);
-		assertEquals("범근", user.getUsername());
-	}*/
+		SiteUser user1 = new SiteUser();
+		user1.setUsername("111");
+		user1.setPassword("111");
+		user1.setEmail("beomgeun@naver.com");
+		user1.setStatus(UserStatus.USER);
+		this.userRepository.save(user1);
+		assertEquals("111", user1.getUsername());
+
+		SiteUser user2 = new SiteUser();
+		user2.setUsername("222");
+		user2.setPassword("222");
+		user2.setEmail("bsd@dsfd");
+		user2.setStatus(UserStatus.USER);
+		this.userRepository.save(user2);
+		assertEquals("222", user2.getUsername());
+
+		SiteUser user3 = new SiteUser();
+		user3.setUsername("333");
+		user3.setPassword("333");
+		user3.setEmail("ben@naveom");
+		user3.setStatus(UserStatus.CEO);
+		this.userRepository.save(user3);
+		assertEquals("333", user3.getUsername());
+	}
 
 	/*@Test
 	void 사용자수정() {
@@ -184,5 +204,18 @@ class SijanggazaApplicationTests {
 
 	//TODO ddabong 추가
 
+
+	@Test
+	@Transactional
+	void 주문생성() {
+		Optional<SiteUser> os = this.userRepository.findByusername("111");
+		SiteUser siteUser = os.get();
+		System.out.println(siteUser);
+		Optional<Board> ob = this.boardRepository.findById(1);
+		Board board = ob.get();
+		System.out.println(board);
+		Item item = this.orderService.selectedItem(board, "치킨");
+		this.orderService.testCreate(siteUser.getUsername(), item, 2);
+	}
 
 }

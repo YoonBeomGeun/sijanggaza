@@ -20,17 +20,33 @@ public class OrderService {
     private final ItemRepository itemRepository;
 
     @Transactional
-    public void create(String username, Item item, int count) {
-        Optional<SiteUser> os = this.userRepository.findByusername(username);
+    public void create(SiteUser author, Item item, int count) {
+        Optional<SiteUser> os = this.userRepository.findByusername(String.valueOf(author));
         SiteUser user = os.get();
 
-        Order order = new Order();
-        order.setName(item.getName());
-        order.setSiteUser(user);
-        order.setOrderPrice(item.getPrice()*count); //수정할 수도(form에서 받으면 됨)
-        order.setCount(count);
-        order.setOrderDate(LocalDateTime.now());
-        order.setStatus(OrderStatus.ORDER);
+        Order orders = new Order();
+        orders.setName(item.getName());
+        orders.setSiteUser(user);
+        orders.setOrderPrice(item.getPrice()*count); //수정할 수도(form에서 받으면 됨)
+        orders.setCount(count);
+        orders.setOrderDate(LocalDateTime.now());
+        orders.setStatus(OrderStatus.ORDER);
+        this.orderRepository.save(orders);
+    }
+
+    @Transactional
+    public void testCreate(String username, Item item, int count) {
+        Optional<SiteUser> os = this.userRepository.findByusername(String.valueOf(username));
+        SiteUser user = os.get();
+
+        Order orders = new Order();
+        orders.setName(item.getName());
+        orders.setSiteUser(user);
+        orders.setOrderPrice(item.getPrice()*count); //수정할 수도(form에서 받으면 됨)
+        orders.setCount(count);
+        orders.setOrderDate(LocalDateTime.now());
+        orders.setStatus(OrderStatus.ORDER);
+        this.orderRepository.save(orders);
     }
 
     public Item selectedItem(Board board, String name) {

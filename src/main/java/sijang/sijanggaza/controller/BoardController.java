@@ -18,6 +18,7 @@ import sijang.sijanggaza.domain.UserStatus;
 import sijang.sijanggaza.repository.BoardRepository;
 import sijang.sijanggaza.service.BoardService;
 import sijang.sijanggaza.service.ItemService;
+import sijang.sijanggaza.service.OrderService;
 import sijang.sijanggaza.service.UserService;
 
 import java.security.Principal;

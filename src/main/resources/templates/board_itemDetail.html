@@ -63,33 +63,10 @@
 
     <!--주문 하기-->
     <div class="card my-3" style="width:80%; margin: 0 auto;">
-        <form role="form" th:action="@{|/createOrder/${board.id}|}" th:object="${orderForm}" method="post">
-            <table class="table table-hover">
-                <thead class="table-light">
-                    <tr class="text-center">
-                        <th style="width:70%">상품명</th>
-                        <th>수량</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="text-center">
-                        <td>
-                            <select class="form-control">
-                                <option value="">상품 선택</option>
-                                <option th:each="item : ${board.itemList}"
-                                        th:value="${item.id}" th:field="*{name}"
-                                        th:text="${item.name}" />
-                            </select>
-                        </td>
-                        <td>
-                            <input type="number" th:field="*{count}" class="form-control" placeholder="주문 수량을 입력하세요.">
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div style="text-align: right;">
-                <button type="submit" class="btn btn-primary" style="margin-bottom: 10px; margin-right: 10px;">주문하기</button>
-            </div>
+        <form th:action="@{|/board/createOrder/${board.id}|}" th:object="${orderForm}" method="post">
+            <input type="text" th:field="*{name}">
+            <input type="number" th:field="*{count}">
+            <input type="submit" value="주문하기" class="btn btn-primary my-2">
         </form>
     </div>
 

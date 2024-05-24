@@ -8,6 +8,7 @@ import sijang.sijanggaza.domain.Board;
 import sijang.sijanggaza.domain.Comment;
 import sijang.sijanggaza.domain.Item;
 import sijang.sijanggaza.domain.SiteUser;
+import sijang.sijanggaza.exception.NotEnoughStockException;
 import sijang.sijanggaza.repository.ItemRepository;
 
 import java.time.LocalDateTime;
@@ -43,8 +44,8 @@ public class ItemService {
     @Transactional
     public Item itemCreate(Board board, String name, int price, int stockquantity) {
         Item item = new Item();
-        item.setIName(name);
         item.setBoard(board);
+        item.setIName(name);
         item.setPrice(price);
         item.setStockQuantity(stockquantity);
         this.itemRepository.save(item);
@@ -78,14 +79,20 @@ public class ItemService {
     /**
      * stock 증가
      */
-    public void addStock(int quantity) {
-
+    public void addStock(int id, int quantity) {
+        Item item = this.itemRepository.findById(id);
+        item.setStockQuantity(item.getStockQuantity()+quantity);
     }
 
     /**
      * stock 감소
      */
-    public void removeStock(int quantity) {
-
+    public void removeStock(int id, int quantity) {
+        Item item = this.itemRepository.findById(id);
+        int restStock = item.getStockQuantity()-quantity;
+        if(restStock<0) {
+            throw new NotEnoughStockException("need more stock");
+        }
+        item.setStockQuantity(restStock);
     }
 }

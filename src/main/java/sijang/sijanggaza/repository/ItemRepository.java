@@ -7,6 +7,7 @@ import sijang.sijanggaza.domain.Item;
 public interface ItemRepository extends JpaRepository<Item, Integer> {
 
     Item findById(int id);
+
     /*Item findByBoardAndName(Board board, String name);*/
 
 }

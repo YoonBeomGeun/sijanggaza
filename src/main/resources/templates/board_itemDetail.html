@@ -62,18 +62,56 @@
     </div>
 
     <!--주문 하기-->
+    <!--<div class="card my-3" style="width:80%; margin: 0 auto;">
+        <form th:action="@{|/orders/create/${board.id}|}" th:object="${orderForm}" method="post">
+            <div th:replace="~{form_errors :: formErrorsFragment}"></div>
+            <select class="form-control" th:field="*{id}" required="required">
+                <option value="" selected>상품 선택</option>
+                <option th:each="item : ${board.itemList}"
+                        th:value="${item.id}"
+                        th:text="${item.iName}"
+                        th:selected="${item.id == orderForm.id}">
+                </option>
+            </select>
+            <input type="number" class="form-control" th:field="*{quantity}">
+            <input type="submit" value="주문하기" class="btn btn-primary my-2">
+        </form>
+    </div>-->
     <div class="card my-3" style="width:80%; margin: 0 auto;">
         <form th:action="@{|/orders/create/${board.id}|}" th:object="${orderForm}" method="post">
             <div th:replace="~{form_errors :: formErrorsFragment}"></div>
-            <select class="form-control" th:field="*{id}">
-                <option value="">상품 선택</option>
-                <option th:each="item : ${board.itemList}"
-                        th:value="${item.id}"
-                        th:text="${item.iName}">
-                </option>
-            </select>
-            <input type="number" th:field="*{quantity}">
-            <input type="submit" value="주문하기" class="btn btn-primary my-2">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr class="text-center">
+                        <th style="width:70%">상품명</th>
+                        <th>수량</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="text-center">
+                        <td>
+                            <select class="form-control" th:field="*{id}" required="required">
+                                <option value="" selected>상품 선택</option>
+                                <option th:each="item : ${board.itemList}"
+                                        th:value="${item.id}"
+                                        th:text="${item.iName}"
+                                        th:selected="${item.id == orderForm.id}">
+                                </option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" class="form-control" th:field="*{quantity}">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="text-align:right; margin-top:-10px; margin-bottom:5px; margin-right:10px;">
+                <input type="submit" value="주문하기" class="btn btn-primary my-2">
+                <!--<a type="submit" href="javascript:void(0);" class="orederBtn btn-primary my-2"
+                   th:data-uri="@{|/board/ddabong/${board.id}|}">
+                    주문하기
+                </a>-->
+            </div>
         </form>
     </div>
 
@@ -141,6 +179,13 @@ Array.from(recommend_elements).forEach(function(element) {
             location.href = this.dataset.uri;
         };
     });
+});
+
+// 주문하기 버튼 클릭 시 확인 메시지 표시
+document.getElementById("orderForm").addEventListener("submit", function(event) {
+    if (!confirm("주문하시겠습니까?")) {
+        event.preventDefault(); // 폼 제출 중단
+    }
 });
 </script>
 </html>

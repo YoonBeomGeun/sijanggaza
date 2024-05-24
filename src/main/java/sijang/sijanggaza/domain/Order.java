@@ -27,7 +27,7 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY)
     private SiteUser siteUser;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Item item;
 
     @Enumerated(EnumType.STRING)

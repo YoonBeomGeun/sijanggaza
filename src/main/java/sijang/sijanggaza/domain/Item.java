@@ -22,8 +22,8 @@ public class Item {
     @Column(length = 100)
     private String iName;
 
-    @OneToOne(mappedBy = "item", fetch = FetchType.LAZY)
-    private Order order;
+    @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
+    private List<Order> orderList;
 
     private int price;
 

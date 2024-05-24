@@ -5,11 +5,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import sijang.sijanggaza.domain.Order;
+import sijang.sijanggaza.domain.SiteUser;
 import sijang.sijanggaza.service.UserService;
+
+import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -57,5 +63,14 @@ public class UserController {
     @GetMapping("/login")
     public String login() {
         return "login_form";
+    }
+
+    @GetMapping("/mypage")
+    public String mypage(Principal principal, Model model) {
+        SiteUser user = this.userService.getUser(principal.getName());
+        List<Order> orderList = user.getOrderList();
+        model.addAttribute("user", user);
+        model.addAttribute("orderList", orderList);
+        return "user_mypage";
     }
 }

@@ -17,6 +17,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
+    private final ItemService itemService;
 
     @Transactional
     public void create(SiteUser siteUser, Item item, int quantity) {
@@ -30,8 +31,9 @@ public class OrderService {
         orders.setSiteUser(user);
         orders.setItem(item);
         orders.setStatus(OrderStatus.ORDER);
-        this.orderRepository.save(orders);
+        this.itemService.removeStock(item, quantity);
 
+        this.orderRepository.save(orders);
     }
 
     /*@Transactional

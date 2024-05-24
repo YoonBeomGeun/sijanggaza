@@ -79,16 +79,14 @@ public class ItemService {
     /**
      * stock 증가
      */
-    public void addStock(int id, int quantity) {
-        Item item = this.itemRepository.findById(id);
+    public void addStock(Item item, int quantity) {
         item.setStockQuantity(item.getStockQuantity()+quantity);
     }
 
     /**
      * stock 감소
      */
-    public void removeStock(int id, int quantity) {
-        Item item = this.itemRepository.findById(id);
+    public void removeStock(Item item, int quantity) {
         int restStock = item.getStockQuantity()-quantity;
         if(restStock<0) {
             throw new NotEnoughStockException("need more stock");

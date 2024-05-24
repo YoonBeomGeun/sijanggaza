@@ -16,14 +16,14 @@ public class Item {
     @Column(name = "item_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Board board;
 
     @Column(length = 100)
-    private String name;
+    private String iName;
 
-    /*@Column(columnDefinition = "TEXT")
-    private String content;*/
+    @OneToOne(mappedBy = "item", fetch = FetchType.LAZY)
+    private Order order;
 
     private int price;
 

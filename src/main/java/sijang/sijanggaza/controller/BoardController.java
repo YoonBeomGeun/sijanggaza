@@ -66,7 +66,7 @@ public class BoardController {
     //회원 유형 == CEO, 게시글 보기
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/itemDetail/{id}")
-    public String itemBoardDetail(@PathVariable("id") Integer id, CommentForm commentForm, Model model) {
+    public String itemBoardDetail(@PathVariable("id") Integer id, CommentForm commentForm, OrderForm orderForm, Model model) {
         Board board = this.boardService.getBoard(id);
         System.out.println(board.toString());
         List<Item> items = this.itemService.getItem(board);

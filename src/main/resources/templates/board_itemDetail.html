@@ -34,7 +34,7 @@
                     </thead>
                     <tbody>
                     <tr class="text-center" th:each="item : ${board.itemList}">
-                        <td th:text="${item.name}"></td>
+                        <td th:text="${item.iName}"></td>
                         <td th:text="${item.price}"></td>
                         <td th:text="${item.stockQuantity}"></td>
                     </tr>
@@ -63,9 +63,16 @@
 
     <!--주문 하기-->
     <div class="card my-3" style="width:80%; margin: 0 auto;">
-        <form th:action="@{|/board/createOrder/${board.id}|}" th:object="${orderForm}" method="post">
-            <input type="text" th:field="*{name}">
-            <input type="number" th:field="*{count}">
+        <form th:action="@{|/orders/create/${board.id}|}" th:object="${orderForm}" method="post">
+            <div th:replace="~{form_errors :: formErrorsFragment}"></div>
+            <select class="form-control" th:field="*{id}">
+                <option value="">상품 선택</option>
+                <option th:each="item : ${board.itemList}"
+                        th:value="${item.id}"
+                        th:text="${item.iName}">
+                </option>
+            </select>
+            <input type="number" th:field="*{quantity}">
             <input type="submit" value="주문하기" class="btn btn-primary my-2">
         </form>
     </div>

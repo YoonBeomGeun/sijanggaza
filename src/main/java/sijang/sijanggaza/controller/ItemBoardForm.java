@@ -42,7 +42,7 @@ public class ItemBoardForm {
 
         public static ItemForm fromItem(Item item) {
             ItemForm form = new ItemForm();
-            form.setName(item.getName());
+            form.setName(item.getIName());
             form.setPrice(item.getPrice());
             form.setStockquantity(item.getStockQuantity());
             return form;

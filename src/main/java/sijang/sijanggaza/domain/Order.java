@@ -19,15 +19,16 @@ public class Order {
     @Column(name = "order_id")
     private Long id;
 
-    private String name;
+    /*private String oName;*/
+    private int orderPrice;
+    private int quantity;
+    private LocalDateTime orderDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private SiteUser siteUser;
 
-    private int orderPrice;
-    private int count;
-
-    private LocalDateTime orderDate;
+    @OneToOne(fetch = FetchType.LAZY)
+    private Item item;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status; //주문 상태(ORDER, CANCEL)

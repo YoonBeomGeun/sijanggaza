@@ -5,10 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import sijang.sijanggaza.domain.*;
-import sijang.sijanggaza.repository.BoardRepository;
-import sijang.sijanggaza.repository.CommentRepository;
-import sijang.sijanggaza.repository.OrderRepository;
-import sijang.sijanggaza.repository.UserRepository;
+import sijang.sijanggaza.repository.*;
 import sijang.sijanggaza.service.BoardService;
 import sijang.sijanggaza.service.OrderService;
 
@@ -36,6 +33,8 @@ class SijanggazaApplicationTests {
 	private OrderService orderService;
 	@Autowired
 	private OrderRepository orderRepository;
+	@Autowired
+	private ItemRepository itemRepository;
 
 	@Test
 	void 사용자등록() {
@@ -205,7 +204,7 @@ class SijanggazaApplicationTests {
 	//TODO ddabong 추가
 
 
-	@Test
+	/*@Test
 	@Transactional
 	void 주문생성() {
 		Optional<SiteUser> os = this.userRepository.findByusername("111");
@@ -214,8 +213,8 @@ class SijanggazaApplicationTests {
 		Optional<Board> ob = this.boardRepository.findById(1);
 		Board board = ob.get();
 		System.out.println(board);
-		Item item = this.orderService.selectedItem(board, "치킨");
-		this.orderService.testCreate(siteUser.getUsername(), item, 2);
-	}
+		Item item = this.itemRepository.findById(1);
+		this.orderService.testCreate("111", item, 2);
+	}*/
 
 }

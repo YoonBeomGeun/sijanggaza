@@ -43,7 +43,7 @@ public class ItemService {
     @Transactional
     public Item itemCreate(Board board, String name, int price, int stockquantity) {
         Item item = new Item();
-        item.setName(name);
+        item.setIName(name);
         item.setBoard(board);
         item.setPrice(price);
         item.setStockQuantity(stockquantity);
@@ -56,9 +56,14 @@ public class ItemService {
         return items;
     }
 
+    public Item selectedItem(int id) {
+        Item item = this.itemRepository.findById(id);
+        return item;
+    }
+
     @Transactional
     public Item itemModify(Item item, String name, int price, int stockquantity) {
-        item.setName(name);
+        item.setIName(name);
         item.setPrice(price);
         item.setStockQuantity(stockquantity);
         Item updatedItem = this.itemRepository.save(item);

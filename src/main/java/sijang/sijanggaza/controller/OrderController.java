@@ -2,6 +2,7 @@ package sijang.sijanggaza.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import sijang.sijanggaza.domain.Board;
 import sijang.sijanggaza.domain.Item;
+import sijang.sijanggaza.domain.Order;
 import sijang.sijanggaza.domain.SiteUser;
 import sijang.sijanggaza.service.BoardService;
 import sijang.sijanggaza.service.ItemService;
@@ -44,5 +46,15 @@ public class OrderController {
         Item item = this.itemService.selectedItem(Math.toIntExact(orderForm.getId()));
         this.orderService.create(siteUser, item, orderForm.getQuantity());
         return String.format("redirect:/board/itemDetail/%s", board.getId());
+    }
+
+    /**
+     * 주문 취소
+     */
+    @PostMapping("/{id}/cancel")
+    public String orderCancel(@PathVariable("id") Integer id) {
+        System.out.println("Cancelling order with ID: " + id);
+        this.orderService.orderCancel(id);
+        return "redirect:/user/mypage";
     }
 }

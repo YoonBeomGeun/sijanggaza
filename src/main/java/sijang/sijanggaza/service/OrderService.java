@@ -1,6 +1,10 @@
 package sijang.sijanggaza.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sijang.sijanggaza.domain.*;
@@ -9,6 +13,8 @@ import sijang.sijanggaza.repository.OrderRepository;
 import sijang.sijanggaza.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -36,6 +42,15 @@ public class OrderService {
         this.orderRepository.save(orders);
     }
 
+    @Transactional
+    public void orderCancel(Integer id) {
+        Optional<Order> oo = this.orderRepository.findById(id);
+        Order order = oo.get();
+        this.itemService.addStock(order.getItem(), order.getQuantity());
+        order.setStatus(OrderStatus.CANCEL);
+        this.orderRepository.save(order);
+    }
+
     /*@Transactional
     public void testCreate(String username, Item item, int count) {
         Optional<SiteUser> os = this.userRepository.findByusername(String.valueOf(username));
@@ -56,5 +71,18 @@ public class OrderService {
         return item;
     }*/
 
+    /**
+     * 마이페이지용
+     * 주문 내역
+     */
+    /*public Page<Order> getList(int page, String kw) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("orderDate"));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
+        *//*Specification<Board> spec = search(kw); // Specification 방법으로 검색
+        return this.boardRepository.findAll(spec, pageable);*//*
+        System.out.println("결과는 : " + this.orderRepository.findAllByKeyword(kw, pageable));
+        return this.orderRepository.findAllByKeyword(kw, pageable);
+    }*/
 
 }

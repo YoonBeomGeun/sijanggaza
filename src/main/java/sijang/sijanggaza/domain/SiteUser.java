@@ -30,6 +30,6 @@ public class SiteUser {
     @Enumerated(EnumType.STRING)
     private UserStatus status; //회원 분류(CEO, USER)
 
-    @OneToMany(mappedBy = "siteUser")
+    @OneToMany(mappedBy = "siteUser", cascade = CascadeType.ALL)
     private List<Order> orderList = new ArrayList<>();
 }

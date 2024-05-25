@@ -115,23 +115,25 @@ btn_search.addEventListener('click', function() {
 
 <script layout:fragment="script" type='text/javascript'>
     function cancel(id) {
-        console.log("Cancelling order with ID:", id); // 디버깅을 위한 로그
+        if(confirm("정말로 주문을 취소하시겠습니까?")) {
+            console.log("Cancelling order with ID:", id); // 디버깅을 위한 로그
 
-        var form = document.createElement("form");
-        form.setAttribute("method", "post");
-        form.setAttribute("action", "/orders/" + id + "/cancel");
+            var form = document.createElement("form");
+            form.setAttribute("method", "post");
+            form.setAttribute("action", "/orders/" + id + "/cancel");
 
-        // CSRF 토큰을 폼에 추가
-        var csrfToken = document.getElementById('csrfToken').value;
-        var csrfInput = document.createElement("input");
-        csrfInput.setAttribute("type", "hidden");
-        csrfInput.setAttribute("name", "_csrf");
-        csrfInput.setAttribute("value", csrfToken);
-        form.appendChild(csrfInput);
+            // CSRF 토큰을 폼에 추가
+            var csrfToken = document.getElementById('csrfToken').value;
+            var csrfInput = document.createElement("input");
+            csrfInput.setAttribute("type", "hidden");
+            csrfInput.setAttribute("name", "_csrf");
+            csrfInput.setAttribute("value", csrfToken);
+            form.appendChild(csrfInput);
 
-        document.body.appendChild(form);
-        form.submit();
+            document.body.appendChild(form);
+            form.submit();
+        }
     }
-    </script>
+</script>
 
 </html>

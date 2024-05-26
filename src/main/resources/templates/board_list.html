@@ -7,7 +7,7 @@
             </span>
         </p>
         <div class="col-6">
-            <a th:href="@{/board/create}" class="btn btn-outline-primary" style="margin-right:150px;">글작성</a>
+            <a th:href="@{/board/create}" class="btn btn-outline-primary" style="margin-right:120px;">글작성</a>
             <a th:href="@{/board/list}" class="btn btn-primary" style="margin-right:20px;">소식 및 정보</a>
             <a th:href="@{/board/itemList}" class="btn btn-outline-primary">상품존</a>
         </div>
@@ -23,6 +23,7 @@
         <tr class="text-center">
             <th>번호</th>
             <th style="width:50%">제목</th>
+            <th>추천</th>
             <th>작성자</th>
             <th>작성일시</th>
         </tr>
@@ -33,8 +34,11 @@
             <td class="text-start">
                 <a th:href="@{|/board/detail/${board.id}|}" th:text="${board.title}"></a>
                 <span class="text-danger small ms-2" th:if="${#lists.size(board.commentList)>0}"
-                      th:text="${#lists.size(board.commentList)}">
+                      th:text="|⌨️${#lists.size(board.commentList)}|">
                 </span>
+            </td>
+            <td>
+                <span th:if="${board.ddabong.size() > 0}" th:text="|❤${board.ddabong.size()}|"></span>
             </td>
             <td><span th:if="${board.author != null}" th:text="${board.author.username}"></span></td>
             <td th:text="${#temporals.format(board.postDate, 'yyyy-MM-dd HH:mm')}"></td>

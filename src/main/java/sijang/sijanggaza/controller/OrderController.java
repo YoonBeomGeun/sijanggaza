@@ -52,7 +52,7 @@ public class OrderController {
             model.addAttribute("board", board);
             return "board_itemDetail";
         }
-        
+
         return String.format("redirect:/board/itemDetail/%s", board.getId());
     }
 

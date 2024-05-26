@@ -12,6 +12,7 @@ import sijang.sijanggaza.domain.Board;
 import sijang.sijanggaza.domain.Item;
 import sijang.sijanggaza.domain.Order;
 import sijang.sijanggaza.domain.SiteUser;
+import sijang.sijanggaza.exception.NotEnoughStockException;
 import sijang.sijanggaza.service.BoardService;
 import sijang.sijanggaza.service.ItemService;
 import sijang.sijanggaza.service.OrderService;
@@ -43,8 +44,15 @@ public class OrderController {
             return "board_itemDetail";
         }
 
-        Item item = this.itemService.selectedItem(Math.toIntExact(orderForm.getId()));
-        this.orderService.create(siteUser, item, orderForm.getQuantity());
+        try {
+            Item item = this.itemService.selectedItem(Math.toIntExact(orderForm.getId()));
+            this.orderService.create(siteUser, item, orderForm.getQuantity());
+        } catch (NotEnoughStockException ex) {
+            model.addAttribute("error", ex.getMessage());
+            model.addAttribute("board", board);
+            return "board_itemDetail";
+        }
+        
         return String.format("redirect:/board/itemDetail/%s", board.getId());
     }
 

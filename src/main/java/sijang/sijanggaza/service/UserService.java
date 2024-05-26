@@ -1,11 +1,10 @@
 package sijang.sijanggaza.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sijang.sijanggaza.DataNotFoundException;
+import sijang.sijanggaza.exception.DataNotFoundException;
 import sijang.sijanggaza.domain.SiteUser;
 import sijang.sijanggaza.domain.UserStatus;
 import sijang.sijanggaza.repository.UserRepository;

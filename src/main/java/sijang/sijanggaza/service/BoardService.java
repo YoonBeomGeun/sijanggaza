@@ -9,7 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sijang.sijanggaza.DataNotFoundException;
+import sijang.sijanggaza.exception.DataNotFoundException;
 import sijang.sijanggaza.domain.Board;
 import sijang.sijanggaza.domain.Comment;
 import sijang.sijanggaza.domain.SiteUser;

@@ -78,8 +78,11 @@
         </form>
     </div>-->
     <div class="card my-3" style="width:80%; margin: 0 auto;">
-        <form th:action="@{|/orders/create/${board.id}|}" th:object="${orderForm}" method="post">
+        <form id="orderForm" th:action="@{|/orders/create/${board.id}|}" th:object="${orderForm}" method="post">
             <div th:replace="~{form_errors :: formErrorsFragment}"></div>
+            <div class="alert alert-danger" th:if="${error}">
+                <p th:text="${error}"></p>
+            </div>
             <table class="table table-hover">
                 <thead class="table-light">
                     <tr class="text-center">
@@ -93,6 +96,7 @@
                             <select class="form-control" th:field="*{id}" required="required">
                                 <option value="" selected>상품 선택</option>
                                 <option th:each="item : ${board.itemList}"
+                                        th:if="${item.stockQuantity > 0}"
                                         th:value="${item.id}"
                                         th:text="${item.iName}"
                                         th:selected="${item.id == orderForm.id}">

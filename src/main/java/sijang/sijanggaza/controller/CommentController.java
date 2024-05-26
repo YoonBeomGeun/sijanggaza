@@ -64,9 +64,6 @@ public class CommentController {
     }
 
 
-
-
-
     /**
      * 댓글 수정
      */
@@ -95,7 +92,7 @@ public class CommentController {
         }
         this.commentService.modify(comment, commentForm.getContent());
         
-        if(board.getAuthor().getStatus() == UserStatus.CEO && board.getItemList().size()>=1) {
+        if(board.getAuthor().getStatus() == UserStatus.CEO) {
             return String.format("redirect:/board/itemDetail/%s#comment_%s", comment.getBoard().getId(), comment.getId());
         } else {
             return String.format("redirect:/board/detail/%s#comment_%s", comment.getBoard().getId(), comment.getId());
@@ -115,7 +112,7 @@ public class CommentController {
         }
         this.commentService.delete(comment);
         
-        if(board.getAuthor().getStatus() == UserStatus.CEO && board.getItemList().size()>=1) {
+        if(board.getAuthor().getStatus() == UserStatus.CEO) {
             return String.format("redirect:/board/itemDetail/%s", comment.getBoard().getId());
         } else {
             return String.format("redirect:/board/detail/%s", comment.getBoard().getId());
@@ -133,7 +130,7 @@ public class CommentController {
         Board board = this.boardService.getBoard(Math.toIntExact(comment.getBoard().getId()));
         this.commentService.ddabong(comment, siteUser);
         
-        if(board.getAuthor().getStatus() == UserStatus.CEO && board.getItemList().size()>=1) {
+        if(board.getAuthor().getStatus() == UserStatus.CEO) {
             return String.format("redirect:/board/itemDetail/%s#comment_%s", comment.getBoard().getId(), comment.getId());
         } else {
             return String.format("redirect:/board/detail/%s#comment_%s", comment.getBoard().getId(), comment.getId());

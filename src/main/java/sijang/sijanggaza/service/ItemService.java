@@ -3,17 +3,12 @@ package sijang.sijanggaza.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sijang.sijanggaza.DataNotFoundException;
 import sijang.sijanggaza.domain.Board;
-import sijang.sijanggaza.domain.Comment;
 import sijang.sijanggaza.domain.Item;
-import sijang.sijanggaza.domain.SiteUser;
 import sijang.sijanggaza.exception.NotEnoughStockException;
 import sijang.sijanggaza.repository.ItemRepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -79,6 +74,7 @@ public class ItemService {
     /**
      * stock 증가
      */
+    @Transactional
     public void addStock(Item item, int quantity) {
         item.setStockQuantity(item.getStockQuantity()+quantity);
     }
@@ -86,6 +82,7 @@ public class ItemService {
     /**
      * stock 감소
      */
+    @Transactional
     public void removeStock(Item item, int quantity) {
         int restStock = item.getStockQuantity()-quantity;
         if(restStock<0) {

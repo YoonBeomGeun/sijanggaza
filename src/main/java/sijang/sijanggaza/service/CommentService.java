@@ -1,10 +1,9 @@
 package sijang.sijanggaza.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sijang.sijanggaza.DataNotFoundException;
+import sijang.sijanggaza.exception.DataNotFoundException;
 import sijang.sijanggaza.domain.Board;
 import sijang.sijanggaza.domain.Comment;
 import sijang.sijanggaza.domain.SiteUser;

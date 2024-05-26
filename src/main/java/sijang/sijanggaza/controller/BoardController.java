@@ -253,7 +253,12 @@ public class BoardController {
         Board board = this.boardService.getBoard(id);
         SiteUser siteUser = this.userService.getUser(principal.getName());
         this.boardService.ddabong(board, siteUser);
-        return String.format("redirect:/board/detail/%s", id);
+
+        if(board.getAuthor().getStatus() == UserStatus.CEO && board.getItemList().size()>=1) {
+            return String.format("redirect:/board/itemDetail/%s", id);
+        } else {
+            return String.format("redirect:/board/detail/%s", id);
+        }
     }
 
 

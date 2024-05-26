@@ -34,11 +34,11 @@ public class OrderController {
      * 주문 생성
      */
     @PostMapping("/create/{id}")
-    public String createOrder(@PathVariable("id") Integer id, @Valid OrderForm orderForm,
-                              BindingResult bindingResult, Principal principal, Model model) {
+    public String createOrder(@PathVariable("id") Integer id, @Valid OrderForm orderForm, BindingResult orderResult,
+                              CommentForm commentForm, Principal principal, Model model) {
         Board board = this.boardService.getBoard(id);
         SiteUser siteUser = this.userService.getUser(principal.getName());
-        if(bindingResult.hasErrors()) {
+        if(orderResult.hasErrors()) {
             model.addAttribute("board", board);
             return "board_itemDetail";
         }

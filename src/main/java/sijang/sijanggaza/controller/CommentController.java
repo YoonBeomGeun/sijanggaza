@@ -30,7 +30,7 @@ public class CommentController {
     private final UserService userService;
 
     /**
-     * 댓글 생성
+     * 댓글 생성 - 자유
      */
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create/{id}")
@@ -40,16 +40,32 @@ public class CommentController {
         SiteUser siteUser = this.userService.getUser(principal.getName());
         if(result.hasErrors()) {
             model.addAttribute("board", board);
+            return "board_detail";
+        }
+        Comment comment = this.commentService.create(board, commentForm.getContent(), siteUser);
+        return String.format("redirect:/board/detail/%s#comment_%s", comment.getBoard().getId(), comment.getId());
+    }
+
+    /**
+     * 댓글 생성 - 상품존
+     */
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/iBoadrdCreate/{id}")
+    public String createItemComment(@PathVariable("id") Integer id, @Valid CommentForm commentForm,
+                                    BindingResult commentResult, OrderForm orderForm, Principal principal, Model model) {
+        Board board = this.boardService.getBoard(id);
+        SiteUser siteUser = this.userService.getUser(principal.getName());
+        if(commentResult.hasErrors()) {
+            model.addAttribute("board", board);
             return "board_itemDetail";
         }
         Comment comment = this.commentService.create(board, commentForm.getContent(), siteUser);
-        
-        if(board.getAuthor().getStatus() == UserStatus.CEO && board.getItemList().size()>=1) {
-            return String.format("redirect:/board/itemDetail/%s#comment_%s", comment.getBoard().getId(), comment.getId());
-        } else {
-            return String.format("redirect:/board/detail/%s#comment_%s", comment.getBoard().getId(), comment.getId());
-        }
+        return String.format("redirect:/board/itemDetail/%s#comment_%s", comment.getBoard().getId(), comment.getId());
     }
+
+
+
+
 
     /**
      * 댓글 수정

@@ -14,6 +14,7 @@ import sijang.sijanggaza.domain.Board;
 import sijang.sijanggaza.domain.Item;
 import sijang.sijanggaza.domain.Order;
 import sijang.sijanggaza.domain.SiteUser;
+import sijang.sijanggaza.dto.BoardDTO;
 import sijang.sijanggaza.exception.NotEnoughStockException;
 import sijang.sijanggaza.service.BoardService;
 import sijang.sijanggaza.service.ItemService;
@@ -40,20 +41,19 @@ public class OrderController {
                               CommentForm commentForm, Principal principal, Model model, RedirectAttributes redirectAttributes) {
         Board board = this.boardService.getBoard(id);
         SiteUser siteUser = this.userService.getUser(principal.getName());
+        Item item = this.itemService.selectedItem(Math.toIntExact(orderForm.getId()));
+
         if(orderResult.hasFieldErrors("quantity")) {
             model.addAttribute("errorMessage", "수량은 1 ~ 99 사이의 숫자만 입력 가능합니다.");
             model.addAttribute("board", board);
             return "board_itemDetail";
-        }
-
-        try {
-            Item item = this.itemService.selectedItem(Math.toIntExact(orderForm.getId()));
-            this.orderService.create(siteUser, item, orderForm.getQuantity());
-        } catch (NotEnoughStockException ex) {
-            model.addAttribute("error", ex.getMessage());
+        } else if (item.getStockQuantity() < orderForm.getQuantity()) {
+            model.addAttribute("errorMessage", "재고 수량이 부족합니다.");
             model.addAttribute("board", board);
             return "board_itemDetail";
         }
+
+        this.orderService.create(siteUser, item, orderForm.getQuantity());
 
         return String.format("redirect:/board/itemDetail/%s", board.getId());
     }

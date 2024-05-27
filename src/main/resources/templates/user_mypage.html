@@ -44,7 +44,9 @@
         </thead>
         <tbody>
         <tr class="text-center" th:each="order : ${orderList}">
-            <td th:text="${order.item.board.id}"></td>
+            <td>
+                <a th:href="@{|/board/itemDetail/${order.item.board.id}|}" th:text="${order.item.board.id}"></a>
+            </td>
             <td th:text="${order.item.iName}"></td>
             <td th:text="${order.quantity}"></td>
             <td th:text="${order.orderPrice}"></td>

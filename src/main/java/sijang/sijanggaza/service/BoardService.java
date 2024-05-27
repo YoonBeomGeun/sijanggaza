@@ -9,6 +9,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sijang.sijanggaza.dto.BoardDTO;
+import sijang.sijanggaza.dto.CommentDTO;
+import sijang.sijanggaza.dto.ItemDTO;
+import sijang.sijanggaza.dto.SiteUserDTO;
 import sijang.sijanggaza.exception.DataNotFoundException;
 import sijang.sijanggaza.domain.Board;
 import sijang.sijanggaza.domain.Comment;
@@ -19,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -121,4 +126,49 @@ public class BoardService {
         };
     }
 
+    /**
+     * DTO 사용
+     */
+    /*public BoardDTO getBoardDTO(Integer id) {
+        Board board = this.getBoard(id);
+        return convertToDTO(board);
+    }
+
+    private BoardDTO convertToDTO(Board board) {
+        BoardDTO dto = new BoardDTO();
+        dto.setId(board.getId());
+        dto.setTitle(board.getTitle());
+        dto.setContent(board.getContent());
+        dto.setPostDate(board.getPostDate());
+        dto.setAuthor(convertToSiteUserDTO(board.getAuthor()));
+        dto.setModifyDate(board.getModifyDate());
+        dto.setCommentList(board.getCommentList().stream().map(comment -> {
+            CommentDTO commentDTO = new CommentDTO();
+            commentDTO.setId(comment.getId());
+            commentDTO.setContent(comment.getContent());
+            commentDTO.setAuthor(convertToSiteUserDTO(comment.getAuthor()));
+            commentDTO.setDdabong(comment.getDdabong());
+            return commentDTO;
+        }).collect(Collectors.toList()));
+        dto.setItemList(board.getItemList().stream().map(item -> {
+            ItemDTO itemDTO = new ItemDTO();
+            itemDTO.setId(item.getId());
+            itemDTO.setIName(item.getIName());
+            itemDTO.setPrice(item.getPrice());
+            itemDTO.setStockQuantity(item.getStockQuantity());
+            return itemDTO;
+        }).collect(Collectors.toList()));
+        dto.setDdabong(board.getDdabong());
+        return dto;
+    }
+
+    private SiteUserDTO convertToSiteUserDTO(SiteUser user) {
+        if (user == null) {
+            return null;
+        }
+        SiteUserDTO userDTO = new SiteUserDTO();
+        userDTO.setId(user.getId());
+        userDTO.setUsername(user.getUsername());
+        return userDTO;
+    }*/
 }

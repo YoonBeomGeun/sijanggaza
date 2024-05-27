@@ -66,7 +66,7 @@
     <div class="card my-3" style="width:80%; margin: 0 auto;">
         <form id="orderForm" th:action="@{|/orders/create/${board.id}|}" th:object="${orderForm}" method="post">
             <!--<div th:replace="~{form_errors :: formErrorsFragment}"></div>-->
-            <div class="alert alert-danger" th:if="${#fields.hasErrors('quantity')}" th:text="${errorMessage}">
+            <div class="alert alert-danger" th:if="${#fields.hasErrors('quantity') or errorMessage ne null}" th:text="${errorMessage}">
             </div>
             <table class="table table-hover">
                 <thead class="table-light">

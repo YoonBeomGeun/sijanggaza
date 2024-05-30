@@ -2,6 +2,7 @@ package sijang.sijanggaza.dto;
 
 import lombok.Data;
 import sijang.sijanggaza.domain.SiteUser;
+import sijang.sijanggaza.dto.user.UserDto;
 
 import java.util.Set;
 
@@ -9,6 +10,6 @@ import java.util.Set;
 public class CommentDTO {
     private Long id;
     private String content;
-    private SiteUserDTO author;
+    private UserDto author;
     private Set<SiteUser> ddabong;
 }

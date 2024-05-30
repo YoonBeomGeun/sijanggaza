@@ -2,6 +2,7 @@ package sijang.sijanggaza.dto;
 
 import lombok.Data;
 import sijang.sijanggaza.domain.SiteUser;
+import sijang.sijanggaza.dto.user.UserDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,7 +15,7 @@ public class BoardDTO {
     private String title;
     private String content;
     private LocalDateTime postDate;
-    private SiteUserDTO author;
+    private UserDto author;
     private LocalDateTime modifyDate;
     private List<CommentDTO> commentList;
     private List<ItemDTO> itemList;

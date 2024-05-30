@@ -9,6 +9,7 @@ import sijang.sijanggaza.domain.SiteUser;
 import sijang.sijanggaza.domain.UserStatus;
 import sijang.sijanggaza.repository.UserRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -37,5 +38,18 @@ public class UserService {
         } else {
             throw new DataNotFoundException("siteuser not found.");
         }
+    }
+
+    public SiteUser findOne(Long id) {
+        Optional<SiteUser> os = userRepository.findById(id);
+        if(os.isPresent()) {
+            return os.get();
+        } else {
+            throw new DataNotFoundException("siteuser not found");
+        }
+    }
+
+    public List<SiteUser> findAll() {
+        return this.userRepository.findAll();
     }
 }

@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 public class OrderDto {
 
     private Long id;
-
     private int orderPrice;
     private int quantity;
     private LocalDateTime orderDate;
@@ -27,5 +26,6 @@ public class OrderDto {
         quantity = order.getQuantity();
         orderDate = order.getOrderDate();
         itemDto = new ItemDto(order.getItem());
+        status = order.getStatus();
     }
 }

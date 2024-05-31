@@ -16,14 +16,12 @@ import java.util.List;
 public class ItemDto {
 
     private Long id;
-    private BoardDto boardDto;
     private String iName;
     private int price;
     private int stockQuantity;
 
     public ItemDto(Item item) {
         id = item.getId();
-        boardDto = new BoardDto(item.getBoard());
         iName = item.getIName();
         price = item.getPrice();
         stockQuantity = item.getStockQuantity();

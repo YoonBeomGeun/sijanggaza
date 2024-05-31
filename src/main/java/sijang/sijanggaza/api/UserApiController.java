@@ -2,17 +2,17 @@ package sijang.sijanggaza.api;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import sijang.sijanggaza.domain.SiteUser;
+import sijang.sijanggaza.dto.order.OrderDto;
 import sijang.sijanggaza.dto.user.UserDto;
 import sijang.sijanggaza.dto.user.request.UserRequestDTO;
 import sijang.sijanggaza.dto.user.response.CreateUserResponseDTO;
+import sijang.sijanggaza.dto.user.response.UserMypageResponseDTO;
 import sijang.sijanggaza.service.UserService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -46,5 +46,17 @@ public class UserApiController {
         newUser.setStatus(request.getStatus());
         SiteUser user = userService.create(newUser.getUsername(), newUser.getPassword(), newUser.getEmail(), newUser.getStatus());
         return new CreateUserResponseDTO(user.getId()); //생성자에 따라 UserRepsonseDto 오버라이딩
+    }
+
+    /**
+     * 마이페이지
+     */
+    @GetMapping("/api/v1/userPage")
+    public UserMypageResponseDTO userPage(@RequestParam("username") String username) {
+        SiteUser user = this.userService.getUser(username);
+        List<OrderDto> orderDtoList = user.getOrderList().stream()
+                .map(OrderDto::new)
+                .collect(Collectors.toList());
+        return new UserMypageResponseDTO(user.getId(), user.getUsername(), user.getEmail(), orderDtoList);
     }
 }

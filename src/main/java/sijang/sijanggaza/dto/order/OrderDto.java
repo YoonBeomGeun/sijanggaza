@@ -1,18 +1,16 @@
-package sijang.sijanggaza.dto;
+package sijang.sijanggaza.dto.order;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import sijang.sijanggaza.domain.Item;
+import sijang.sijanggaza.domain.Order;
 import sijang.sijanggaza.domain.OrderStatus;
-import sijang.sijanggaza.domain.SiteUser;
-import sijang.sijanggaza.dto.user.UserDto;
+import sijang.sijanggaza.dto.item.ItemDto;
 
 import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class OrderDto {
 
     private Long id;
@@ -20,6 +18,14 @@ public class OrderDto {
     private int orderPrice;
     private int quantity;
     private LocalDateTime orderDate;
-    private Item item;
+    private ItemDto itemDto;
     private OrderStatus status; //주문 상태(ORDER, CANCEL)
+
+    public OrderDto(Order order) {
+        id = order.getId();
+        orderPrice = order.getOrderPrice();
+        quantity = order.getQuantity();
+        orderDate = order.getOrderDate();
+        itemDto = new ItemDto(order.getItem());
+    }
 }

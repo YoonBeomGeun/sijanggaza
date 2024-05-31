@@ -40,7 +40,9 @@ public class Order {
         siteUser.getOrderList().add(this);
     }
 
-
-
+    /*public void Order(SiteUser siteUser, Item item) {
+        this.siteUser = siteUser;
+        this.item = item;
+    }*/
 
 }

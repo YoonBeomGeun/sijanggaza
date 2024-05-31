@@ -1,11 +1,16 @@
 package sijang.sijanggaza.api;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import sijang.sijanggaza.domain.SiteUser;
 import sijang.sijanggaza.dto.order.OrderDto;
 import sijang.sijanggaza.dto.user.UserDto;
+import sijang.sijanggaza.dto.user.request.UserRequestDTO;
+import sijang.sijanggaza.dto.user.response.CreateUserResponseDTO;
 import sijang.sijanggaza.service.UserService;
 
 import java.util.List;
@@ -19,6 +24,9 @@ public class UserApiController {
 
     private final UserService userService;
 
+    /**
+     * 회원 전체 조회
+     */
     @GetMapping("/api/v1/users")
     public List<UserDto> findUserV1() {
         List<SiteUser> userList = userService.findAll();
@@ -26,5 +34,19 @@ public class UserApiController {
                 .map(u -> new UserDto(u.getId(), u.getUsername(), u.getPassword(), u.getEmail()))
                 .collect(toList());
         return collect;
+    }
+
+    /**
+     * 회원 가입
+     */
+    @PostMapping("/api/v1/createUser")
+    public CreateUserResponseDTO createUser(@RequestBody @Valid UserRequestDTO request){
+        SiteUser newUser = new SiteUser();
+        newUser.setUsername(request.getUsername());
+        newUser.setPassword(request.getPassword());
+        newUser.setEmail(request.getEmail());
+        newUser.setStatus(request.getStatus());
+        SiteUser user = userService.create(newUser.getUsername(), newUser.getPassword(), newUser.getEmail(), newUser.getStatus());
+        return new CreateUserResponseDTO(user.getId()); //생성자에 따라 UserRepsonseDto 오버라이딩
     }
 }

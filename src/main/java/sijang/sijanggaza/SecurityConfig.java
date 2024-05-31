@@ -25,7 +25,8 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/orders/**")).authenticated()
                         .anyRequest().permitAll())
                 .csrf((csrf) -> csrf
-                        .ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**"))) // /h2-console/로 시작하는 모든 URL은 CSRF 검증 X
+                        /*.ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**")))*/ // /h2-console/로 시작하는 모든 URL은 CSRF 검증 X
+                        .ignoringRequestMatchers(new AntPathRequestMatcher("/**"))) // api 테스트를 위해 수정
                 .headers((headers) -> headers
                         .addHeaderWriter(new XFrameOptionsHeaderWriter(
                             XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))) //URL 요청 시 X-Frame-Options 헤더를 DENY 대신 SAMEORIGIN으로 설정

@@ -7,14 +7,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import sijang.sijanggaza.domain.SiteUser;
-import sijang.sijanggaza.dto.order.OrderDto;
 import sijang.sijanggaza.dto.user.UserDto;
 import sijang.sijanggaza.dto.user.request.UserRequestDTO;
 import sijang.sijanggaza.dto.user.response.CreateUserResponseDTO;
 import sijang.sijanggaza.service.UserService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 

@@ -2,20 +2,19 @@ package sijang.sijanggaza.api;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import sijang.sijanggaza.controller.BoardForm;
+import sijang.sijanggaza.controller.ItemBoardForm;
 import sijang.sijanggaza.domain.Board;
+import sijang.sijanggaza.domain.Item;
 import sijang.sijanggaza.domain.SiteUser;
-import sijang.sijanggaza.dto.board.response.CreateUserBoardResponseDTO;
-import sijang.sijanggaza.dto.board.response.DeleteUserBoardResponseDTO;
-import sijang.sijanggaza.dto.board.response.ModifyUserBoardResponseDTO;
-import sijang.sijanggaza.dto.board.response.UserBoardResponseDTO;
+import sijang.sijanggaza.dto.board.response.*;
 import sijang.sijanggaza.service.BoardService;
+import sijang.sijanggaza.service.ItemService;
 import sijang.sijanggaza.service.UserService;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +22,7 @@ public class BoardApiController {
 
     private final BoardService boardService;
     private final UserService userService;
+    private final ItemService itemService;
 
     /*@GetMapping("/api/v1/userBoards")
     public List<UserBoardResponseDTO> getBoardListOfUser(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam("kw") String kw) {
@@ -41,6 +41,8 @@ public class BoardApiController {
                 .collect(Collectors.toList());
         return result;
     }*/
+
+    /**소식 및 정보 게시글**/
 
     /**
      * 게시글 상세
@@ -81,4 +83,54 @@ public class BoardApiController {
         this.boardService.delete(targteBoard);
         return new DeleteUserBoardResponseDTO(targteBoard.getId());
     }
+
+
+    /******************************************************************************************************************/
+
+    /**상품 게시글**/
+
+    /**
+     * 게시글 상세
+     */
+    @GetMapping("/api/v1/itemBoard/{boardId}")
+    public CeoBoardResponseDTO getCeoBoard(@PathVariable("boardId") Integer boardId) {
+        Board board = boardService.getBoard(boardId);
+        return new CeoBoardResponseDTO(board);
+    }
+
+    /**
+     * 게시글 생성
+     */
+    @PostMapping("/api/v1/{id}/itemBoard")
+    public CreateCeoBoardResponseDTO saveBoard(@PathVariable("id") Long id, @RequestBody @Valid ItemBoardForm itemBoardForm){
+        SiteUser user = userService.findOne(id);
+        Board board = this.boardService.itemBoardcreate(itemBoardForm.getTitle(), itemBoardForm.getContent(), user);
+        List<Item> itemList = new ArrayList<>();
+        for (ItemBoardForm.ItemForm itemForm : itemBoardForm.getItems()) {
+            Item item = new Item();
+            item.setIName(itemForm.getName());
+            item.setPrice(itemForm.getPrice());
+            item.setStockQuantity(itemForm.getStockquantity());
+            itemList.add(item);
+            this.itemService.itemCreate(board, item.getIName(), item.getPrice(), item.getStockQuantity());
+        }
+        // Null 체크 후에만 itemList를 board에 설정
+        if (board.getItemList() == null) {
+            board.setItemList(new ArrayList<>(itemList));
+        } else {
+            board.getItemList().addAll(itemList);
+        }
+
+        return new CreateCeoBoardResponseDTO(board);
+    }
+
+    /**
+     * 게시글 수정
+     */
+    /*@PutMapping("/api/v1/itemBoard/{boardId}")
+    public ModifyUserBoardResponseDTO saveBoard(@PathVariable("boardId") Integer boardId, @RequestBody @Valid ItemBoardForm itemBoardForm){
+        Board targteBoard = this.boardService.getBoard(boardId);
+        this.boardService.modify(targteBoard, boardForm.getTitle(), boardForm.getContent());
+        return new ModifyUserBoardResponseDTO(targteBoard);
+    }*/
 }

@@ -91,7 +91,7 @@ public class BoardController {
             return "board_form";
         }
         SiteUser siteUser = this.userService.getUser(principal.getName());
-        this.boardService.create(boardForm.getTitle(), boardForm.getContent(), siteUser);
+        this.boardService.create(siteUser, boardForm);
         return "redirect:/board/list";
     }
 

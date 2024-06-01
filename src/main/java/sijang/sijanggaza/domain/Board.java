@@ -26,10 +26,10 @@ public class Board {
 
     private LocalDateTime postDate;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Comment> commentList;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Item> itemList;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,7 +37,7 @@ public class Board {
 
     private LocalDateTime modifyDate;
 
-    @ManyToMany // 다대다로 생성 시, 새로운 테이블로 데이터 관리
+    @ManyToMany(fetch = FetchType.LAZY) // 다대다로 생성 시, 새로운 테이블로 데이터 관리
     Set<SiteUser> ddabong;
 
 

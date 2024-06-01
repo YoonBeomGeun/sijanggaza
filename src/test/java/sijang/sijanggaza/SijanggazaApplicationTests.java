@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import sijang.sijanggaza.controller.BoardForm;
 import sijang.sijanggaza.domain.*;
 import sijang.sijanggaza.repository.*;
 import sijang.sijanggaza.service.BoardService;
@@ -194,10 +195,15 @@ class SijanggazaApplicationTests {
 
 	@Test
 	void 페이징테스트데이터생성() {
+		Optional<SiteUser> os = userRepository.findByusername("111");
+		SiteUser user = os.get();
 		for(int i=1; i<=150; i++) {
 			String title = String.format("테스트 데이터 생성:[%03d]", i);
-			String content = "내용 없음";
-			this.boardService.create(title, content, null);
+			String content = String.format("테스트 데이터 내용:[%03d]", i);
+			BoardForm b = new BoardForm();
+			b.setTitle(title);
+			b.setContent(content);
+			this.boardService.create(user, b);
 		}
 	}
 

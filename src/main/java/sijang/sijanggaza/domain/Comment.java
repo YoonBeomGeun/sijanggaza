@@ -29,6 +29,6 @@ public class Comment {
 
     private LocalDateTime modifyDate;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     Set<SiteUser> ddabong;
 }

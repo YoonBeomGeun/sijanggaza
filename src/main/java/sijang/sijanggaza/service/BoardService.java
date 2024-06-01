@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sijang.sijanggaza.controller.BoardForm;
 import sijang.sijanggaza.exception.DataNotFoundException;
 import sijang.sijanggaza.domain.Board;
 import sijang.sijanggaza.domain.Comment;
@@ -34,6 +35,16 @@ public class BoardService {
         this.boardRepository.save(board);
     }
 
+    /**
+     * test
+     */
+    public Page<Board> getListV2(int page){
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("postDate"));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
+        return boardRepository.findAllWithAuthor(pageable);
+    }
+
     //게시글 목록 페이징으로 불러오기
     //회원 유형 == USER
     public Page<Board> getListOfUser(int page, String kw) {
@@ -44,6 +55,16 @@ public class BoardService {
         return this.boardRepository.findAll(spec, pageable);*/
         return this.boardRepository.findAllByKeywordOfUser(kw, pageable);
     }
+
+    /**
+     * N+1 해결
+     */
+    /*public Page<Board> getListOfUserV2(int page, String kw) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("postDate"));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
+        return this.boardRepository.findAllByKeywordOfUserV2(kw, pageable);
+    }*/
 
     //회원 유형 == CEO
     public Page<Board> getListOfCeo(int page, String kw) {
@@ -65,13 +86,14 @@ public class BoardService {
     }
 
     @Transactional
-    public void create(String title, String content, SiteUser user) {
+    public Long create(SiteUser user, BoardForm boardForm) {
         Board b = new Board();
-        b.setTitle(title);
-        b.setContent(content);
+        b.setTitle(boardForm.getTitle());
+        b.setContent(boardForm.getContent());
         b.setPostDate(LocalDateTime.now());
         b.setAuthor(user);
-        this.boardRepository.save(b);
+        Board board = this.boardRepository.save(b);
+        return board.getId();
     }
 
     @Transactional

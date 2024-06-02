@@ -2,6 +2,7 @@ package sijang.sijanggaza.dto.comment;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import sijang.sijanggaza.domain.Comment;
 import sijang.sijanggaza.domain.SiteUser;
 import sijang.sijanggaza.dto.user.UserDto;
@@ -11,6 +12,7 @@ import java.util.Set;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class CommentDto {
     private Long id;
     private String content;

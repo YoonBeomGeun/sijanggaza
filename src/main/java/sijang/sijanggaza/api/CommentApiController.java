@@ -6,13 +6,18 @@ import sijang.sijanggaza.domain.Board;
 import sijang.sijanggaza.domain.Comment;
 import sijang.sijanggaza.domain.SiteUser;
 import sijang.sijanggaza.dto.board.response.DeleteUserBoardResponseDTO;
+import sijang.sijanggaza.dto.comment.CommentDto;
 import sijang.sijanggaza.dto.comment.request.CommentRequestDTO;
 import sijang.sijanggaza.dto.comment.response.CreateCommentResponseDTO;
 import sijang.sijanggaza.dto.comment.response.DeleteCommentResponseDTO;
 import sijang.sijanggaza.dto.comment.response.ModifyCommentResponseDTO;
+import sijang.sijanggaza.repository.CommentRepository;
 import sijang.sijanggaza.service.BoardService;
 import sijang.sijanggaza.service.CommentService;
 import sijang.sijanggaza.service.UserService;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,6 +26,27 @@ public class CommentApiController {
     private final CommentService commentService;
     private final BoardService boardService;
     private final UserService userService;
+    private final CommentRepository commentRepository;
+
+    /**
+     * 댓글 단건 조회
+     */
+    @GetMapping("/api/v1/comment/{commentId}")
+    public CommentDto getComment(@PathVariable("commentId") Long commentId) {
+        Comment comment = this.commentService.getComment(Math.toIntExact(commentId));
+        return new CommentDto(comment);
+    }
+
+    /**
+     * 댓글 전체 조회(최적화 완료)
+     */
+    @GetMapping("/api/v1/commentList/{boardId}")
+    public List<CommentDto> getCommentList(@PathVariable("boardId") Long boardId) {
+        List<CommentDto> result = this.commentRepository.findAllComment(boardId).stream()
+                .map(comment -> new CommentDto(comment))
+                .collect(Collectors.toList());
+        return result;
+    }
 
     /**
      * 댓글 생성

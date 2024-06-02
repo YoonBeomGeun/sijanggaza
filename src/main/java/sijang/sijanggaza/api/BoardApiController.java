@@ -14,7 +14,11 @@ import sijang.sijanggaza.service.ItemService;
 import sijang.sijanggaza.service.UserService;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -57,7 +61,7 @@ public class BoardApiController {
      * 게시글 생성
      */
     @PostMapping("/api/v1/{id}/board")
-    public CreateUserBoardResponseDTO saveBoard(@PathVariable("id") Long id, @RequestBody @Valid BoardForm boardForm){
+    public CreateUserBoardResponseDTO createUserBoard(@PathVariable("id") Long id, @RequestBody @Valid BoardForm boardForm){
         SiteUser user = userService.findOne(id);
         Long boardId = boardService.create(user, boardForm);
         Board board = boardService.getBoard(Math.toIntExact(boardId));
@@ -68,7 +72,7 @@ public class BoardApiController {
      * 게시글 수정
      */
     @PutMapping("/api/v1/board/{boardId}")
-    public ModifyUserBoardResponseDTO saveBoard(@PathVariable("boardId") Integer boardId, @RequestBody @Valid BoardForm boardForm){
+    public ModifyUserBoardResponseDTO modifyUserBoard(@PathVariable("boardId") Integer boardId, @RequestBody @Valid BoardForm boardForm){
         Board targteBoard = this.boardService.getBoard(boardId);
         this.boardService.modify(targteBoard, boardForm.getTitle(), boardForm.getContent());
         return new ModifyUserBoardResponseDTO(targteBoard);
@@ -78,7 +82,7 @@ public class BoardApiController {
      * 게시글 삭제
      */
     @DeleteMapping("/api/v1/board/{boardId}")
-    public DeleteUserBoardResponseDTO saveBoard(@PathVariable("boardId") Integer boardId){
+    public DeleteUserBoardResponseDTO deleteBoard(@PathVariable("boardId") Integer boardId){
         Board targteBoard = this.boardService.getBoard(boardId);
         this.boardService.delete(targteBoard);
         return new DeleteUserBoardResponseDTO(targteBoard.getId());
@@ -102,7 +106,7 @@ public class BoardApiController {
      * 게시글 생성
      */
     @PostMapping("/api/v1/{id}/itemBoard")
-    public CreateCeoBoardResponseDTO saveBoard(@PathVariable("id") Long id, @RequestBody @Valid ItemBoardForm itemBoardForm){
+    public CreateCeoBoardResponseDTO createCeoBoard(@PathVariable("id") Long id, @RequestBody @Valid ItemBoardForm itemBoardForm){
         SiteUser user = userService.findOne(id);
         Board board = this.boardService.itemBoardcreate(itemBoardForm.getTitle(), itemBoardForm.getContent(), user);
         List<Item> itemList = new ArrayList<>();
@@ -127,10 +131,48 @@ public class BoardApiController {
     /**
      * 게시글 수정
      */
-    /*@PutMapping("/api/v1/itemBoard/{boardId}")
-    public ModifyUserBoardResponseDTO saveBoard(@PathVariable("boardId") Integer boardId, @RequestBody @Valid ItemBoardForm itemBoardForm){
-        Board targteBoard = this.boardService.getBoard(boardId);
-        this.boardService.modify(targteBoard, boardForm.getTitle(), boardForm.getContent());
-        return new ModifyUserBoardResponseDTO(targteBoard);
-    }*/
+    @PutMapping("/api/v1/itemBoard/{boardId}")
+    public ModifyCeoBoardResponseDTO modifyCeoBoard(@PathVariable("boardId") Integer boardId, @RequestBody @Valid ItemBoardForm itemBoardForm){
+        Board targetboard = this.boardService.getBoard(boardId);
+        this.boardService.modify(targetboard, itemBoardForm.getTitle(), itemBoardForm.getContent());
+
+        List<Item> existingItems = targetboard.getItemList();
+
+        // 업데이트 된 아이템 목록
+        List<ItemBoardForm.ItemForm> updatedItems = itemBoardForm.getItems();
+
+        // 기존 아이템과 새로운 아이템 매핑 (아이템 이름과 가격을 조합한 키 사용)
+        Map<String, ItemBoardForm.ItemForm> updatedItemsMap = updatedItems.stream()
+                .collect(Collectors.toMap(itemForm -> itemForm.getName() + "_" + itemForm.getPrice(), Function.identity()));
+
+        // 기존 아이템 수정 및 삭제 처리
+        Iterator<Item> existingItemsIterator = existingItems.iterator();
+        while (existingItemsIterator.hasNext()) {
+            Item item = existingItemsIterator.next();
+            String itemKey = item.getIName() + "_" + item.getPrice();
+            ItemBoardForm.ItemForm updatedItemForm = updatedItemsMap.get(itemKey);
+
+            if (updatedItemForm != null) {
+                // 아이템 수정
+                this.itemService.itemModify(item, updatedItemForm.getName(), updatedItemForm.getPrice(), updatedItemForm.getStockquantity());
+                updatedItemsMap.remove(itemKey); // 수정된 아이템은 맵에서 제거
+            } else {
+                // 아이템 삭제
+                this.itemService.itemDelete(item);
+                existingItemsIterator.remove(); // 기존 리스트에서 삭제
+            }
+        }
+
+        // 새로 추가된 아이템 처리
+        updatedItemsMap.values().forEach(itemForm -> {
+            Item newItem = new Item();
+            newItem.setIName(itemForm.getName());
+            newItem.setPrice(itemForm.getPrice());
+            newItem.setStockQuantity(itemForm.getStockquantity());
+            this.itemService.itemCreate(targetboard, newItem.getIName(), newItem.getPrice(), newItem.getStockQuantity());
+            targetboard.getItemList().add(newItem);
+        });
+
+        return new ModifyCeoBoardResponseDTO(targetboard);
+    }
 }

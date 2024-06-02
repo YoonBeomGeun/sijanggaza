@@ -64,6 +64,7 @@ public class UserApiController {
     }
 
     // 쿼리 성능 UP
+    // 일대다 관계에서 fetch join 사용하면 페이징 불가
     @GetMapping("/api/v2/userPage")
     public UserMypageResponseDTO userPageV2(@RequestParam("username") String username) {
         SiteUser user = this.userService.getUser(username);

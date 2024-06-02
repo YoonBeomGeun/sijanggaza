@@ -3,12 +3,14 @@ package sijang.sijanggaza.api;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import sijang.sijanggaza.domain.Order;
 import sijang.sijanggaza.domain.SiteUser;
 import sijang.sijanggaza.dto.order.OrderDto;
 import sijang.sijanggaza.dto.user.UserDto;
 import sijang.sijanggaza.dto.user.request.UserRequestDTO;
 import sijang.sijanggaza.dto.user.response.CreateUserResponseDTO;
 import sijang.sijanggaza.dto.user.response.UserMypageResponseDTO;
+import sijang.sijanggaza.repository.OrderRepository;
 import sijang.sijanggaza.service.UserService;
 
 import java.util.List;
@@ -21,6 +23,7 @@ import static java.util.stream.Collectors.toList;
 public class UserApiController {
 
     private final UserService userService;
+    private final OrderRepository orderRepository;
 
     /**
      * 회원 전체 조회
@@ -52,11 +55,22 @@ public class UserApiController {
      * 마이페이지
      */
     @GetMapping("/api/v1/userPage")
-    public UserMypageResponseDTO userPage(@RequestParam("username") String username) {
+    public UserMypageResponseDTO userPageV1(@RequestParam("username") String username) {
         SiteUser user = this.userService.getUser(username);
         List<OrderDto> orderDtoList = user.getOrderList().stream()
                 .map(OrderDto::new)
                 .collect(Collectors.toList());
+        return new UserMypageResponseDTO(user.getId(), user.getUsername(), user.getEmail(), orderDtoList);
+    }
+
+    // 쿼리 성능 UP
+    @GetMapping("/api/v2/userPage")
+    public UserMypageResponseDTO userPageV2(@RequestParam("username") String username) {
+        SiteUser user = this.userService.getUser(username);
+        List<Order> orderList = this.orderRepository.findAllWithItem(username);
+        List<OrderDto> orderDtoList = orderList.stream()
+                .map(OrderDto::new)
+                .collect(toList());
         return new UserMypageResponseDTO(user.getId(), user.getUsername(), user.getEmail(), orderDtoList);
     }
 }

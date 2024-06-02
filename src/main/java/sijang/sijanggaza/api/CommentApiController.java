@@ -40,7 +40,7 @@ public class CommentApiController {
     /**
      * 댓글 전체 조회(최적화 완료)
      */
-    @GetMapping("/api/v1/commentList/{boardId}")
+    @GetMapping("/api/v1/comments/{boardId}")
     public List<CommentDto> getCommentList(@PathVariable("boardId") Long boardId) {
         List<CommentDto> result = this.commentRepository.findAllComment(boardId).stream()
                 .map(comment -> new CommentDto(comment))

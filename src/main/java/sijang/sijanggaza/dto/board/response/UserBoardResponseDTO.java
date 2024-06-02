@@ -1,6 +1,8 @@
 package sijang.sijanggaza.dto.board.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import sijang.sijanggaza.domain.Board;
 import sijang.sijanggaza.dto.comment.CommentDto;
 
@@ -9,6 +11,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserBoardResponseDTO {
 
     private Long id;

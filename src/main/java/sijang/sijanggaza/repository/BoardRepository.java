@@ -25,13 +25,6 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
 
     Page<Board> findAll(Specification<Board> spec, Pageable pageable);
 
-    @Query("select b from Board b "
-            + "join fetch b.author a")
-    Page<Board> findAllWithAuthor(Pageable pageable);
-
-    /**
-     * N + 1 문제 발생할 수도
-     */
     @Query("select "
             + "distinct b"
             + " from Board b"
@@ -41,22 +34,19 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
             + " and(b.title like %:kw%"
             + " or b.content like %:kw%"
             + " or u1.username like %:kw%)")
-    Page<Board> findAllByKeywordOfUser(@Param("kw") String kw, Pageable pageable);
+    Page<Board> findAllByKeywordOfUserV1(@Param("kw") String kw, Pageable pageable);
 
-   /* *//**
-     * 수정
-     *//*
-    @Query("select"
-            + " distinct b"
-            + " from Board b"
-            + " left join fetch b.author u1"
-            + " where"
-            + " u1.status = 'USER'"
-            + " and (b.title like %:kw%"
-            + " or b.content like %:kw%"
-            + " or u1.username like %:kw%)")
-    @EntityGraph(attributePaths = "author")
-    Page<Board> findAllByKeywordOfUserV2(@Param("kw") String kw, Pageable pageable);*/
+    @Query("select" +
+            " b from Board b" +
+            " left join fetch b.commentList" +
+            " join fetch b.author u" +
+            " where" +
+            " u.status = 'USER'" +
+            " and(b.title like %:kw%" +
+            " or b.content like %:kw%" +
+            " or u.username like %:kw%)")
+    Page<Board> findAllByKeywordOfUserV2(@Param("kw") String kw, Pageable pageable);
+
 
     @Query("select "
             + "distinct b"
@@ -67,6 +57,19 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
             + " and(b.title like %:kw%"
             + " or b.content like %:kw%"
             + " or u1.username like %:kw%)")
-    Page<Board> findAllByKeywordOfCeo(@Param("kw") String kw, Pageable pageable);
+    Page<Board> findAllByKeywordOfCeoV1(@Param("kw") String kw, Pageable pageable);
 
+    /**
+     * N+1 해결
+     */
+    @Query("select" +
+            " b from Board b" +
+            " left join fetch b.itemList" +
+            " join fetch b.author u" +
+            " where" +
+            " u.status = 'CEO'" +
+            " and(b.title like %:kw%" +
+            " or b.content like %:kw%" +
+            " or u.username like %:kw%)")
+    Page<Board> findAllByKeywordOfCeoV2(@Param("kw") String kw, Pageable pageable);
 }

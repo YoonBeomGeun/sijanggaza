@@ -2,6 +2,7 @@ package sijang.sijanggaza.api;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import sijang.sijanggaza.controller.BoardForm;
 import sijang.sijanggaza.controller.ItemBoardForm;
@@ -28,25 +29,20 @@ public class BoardApiController {
     private final UserService userService;
     private final ItemService itemService;
 
-    /*@GetMapping("/api/v1/userBoards")
-    public List<UserBoardResponseDTO> getBoardListOfUser(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam("kw") String kw) {
-        Page<Board> boardListOfUser = this.boardService.getListOfUserV2(page, kw);
-        List<UserBoardResponseDTO> userBoards = boardListOfUser.stream()
-                .map(board -> new UserBoardResponseDTO(board))
-                .collect(Collectors.toList());
-        return userBoards;
-    }*/
-
-    /*@GetMapping("/api/v1/boards") // 페이징 조회
-    public List<UserBoardResponseDTO> getBoardList(@RequestParam(value = "page", defaultValue = "0") int page){
-        Page<Board> boards = boardService.getListV2(page);
-        List<UserBoardResponseDTO> result= boards.stream()
-                .map(b -> new UserBoardResponseDTO(b))
-                .collect(Collectors.toList());
-        return result;
-    }*/
 
     /**소식 및 정보 게시글**/
+
+    /**
+     * 게시글 목록 조회
+     */
+    @GetMapping("/api/v1/userBoards")
+    public List<UserBoardResponseDTO> getBoardListOfUser(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam("kw") String kw) {
+        Page<Board> boardPage = this.boardService.getListOfUserV2(page, kw);
+        List<UserBoardResponseDTO> boardListOfUser = boardPage.stream()
+                .map(board -> new UserBoardResponseDTO(board))
+                .collect(Collectors.toList());
+        return boardListOfUser;
+    }
 
     /**
      * 게시글 상세
@@ -89,9 +85,19 @@ public class BoardApiController {
     }
 
 
-    /******************************************************************************************************************/
+    /******************************************************상품 게시글************************************************************/
 
-    /**상품 게시글**/
+    /**
+     * 게시글 목록 조회(N+1 해결)
+     */
+    @GetMapping("/api/v1/ceoBoards")
+    public List<CeoBoardResponseDTO> getBoardListOfCeo(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam("kw") String kw) {
+        Page<Board> itemBoardPage = this.boardService.getListOfCeoV2(page, kw);
+        List<CeoBoardResponseDTO> boardListOfCeo = itemBoardPage.stream()
+                .map(board -> new CeoBoardResponseDTO(board))
+                .collect(Collectors.toList());
+        return boardListOfCeo;
+    }
 
     /**
      * 게시글 상세

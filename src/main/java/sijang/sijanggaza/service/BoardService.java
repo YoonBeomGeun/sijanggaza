@@ -15,6 +15,7 @@ import sijang.sijanggaza.domain.Board;
 import sijang.sijanggaza.domain.Comment;
 import sijang.sijanggaza.domain.SiteUser;
 import sijang.sijanggaza.repository.BoardRepository;
+import sijang.sijanggaza.repository.CommentRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import java.util.Optional;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final CommentRepository commentRepository;
 
     public List<Board> getList() {
         return this.boardRepository.findAll();
@@ -35,45 +37,41 @@ public class BoardService {
         this.boardRepository.save(board);
     }
 
-    /**
-     * test
-     */
-    public Page<Board> getListV2(int page){
-        List<Sort.Order> sorts = new ArrayList<>();
-        sorts.add(Sort.Order.desc("postDate"));
-        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
-        return boardRepository.findAllWithAuthor(pageable);
-    }
 
     //게시글 목록 페이징으로 불러오기
     //회원 유형 == USER
-    public Page<Board> getListOfUser(int page, String kw) {
+    public Page<Board> getListOfUserV1(int page, String kw) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("postDate"));
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
         /*Specification<Board> spec = search(kw); // Specification 방법으로 검색
         return this.boardRepository.findAll(spec, pageable);*/
-        return this.boardRepository.findAllByKeywordOfUser(kw, pageable);
+        return this.boardRepository.findAllByKeywordOfUserV1(kw, pageable);
     }
 
-    /**
-     * N+1 해결
-     */
-    /*public Page<Board> getListOfUserV2(int page, String kw) {
+    public Page<Board> getListOfUserV2(int page, String kw) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("postDate"));
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
         return this.boardRepository.findAllByKeywordOfUserV2(kw, pageable);
-    }*/
+    }
+
 
     //회원 유형 == CEO
-    public Page<Board> getListOfCeo(int page, String kw) {
+    public Page<Board> getListOfCeoV1(int page, String kw) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("postDate"));
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
         /*Specification<Board> spec = search(kw); // Specification 방법으로 검색
         return this.boardRepository.findAll(spec, pageable);*/
-        return this.boardRepository.findAllByKeywordOfCeo(kw, pageable);
+        return this.boardRepository.findAllByKeywordOfCeoV1(kw, pageable);
+    }
+
+    public Page<Board> getListOfCeoV2(int page, String kw) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("postDate"));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
+        return this.boardRepository.findAllByKeywordOfCeoV2(kw, pageable);
     }
 
     public Board getBoard(Integer id) {
@@ -143,49 +141,4 @@ public class BoardService {
         };
     }
 
-    /**
-     * DTO 사용
-     */
-    /*public BoardDTO getBoardDTO(Integer id) {
-        Board board = this.getBoard(id);
-        return convertToDTO(board);
-    }
-
-    private BoardDTO convertToDTO(Board board) {
-        BoardDTO dto = new BoardDTO();
-        dto.setId(board.getId());
-        dto.setTitle(board.getTitle());
-        dto.setContent(board.getContent());
-        dto.setPostDate(board.getPostDate());
-        dto.setAuthor(convertToSiteUserDTO(board.getAuthor()));
-        dto.setModifyDate(board.getModifyDate());
-        dto.setCommentList(board.getCommentList().stream().map(comment -> {
-            CommentDTO commentDTO = new CommentDTO();
-            commentDTO.setId(comment.getId());
-            commentDTO.setContent(comment.getContent());
-            commentDTO.setAuthor(convertToSiteUserDTO(comment.getAuthor()));
-            commentDTO.setDdabong(comment.getDdabong());
-            return commentDTO;
-        }).collect(Collectors.toList()));
-        dto.setItemList(board.getItemList().stream().map(item -> {
-            ItemDTO itemDTO = new ItemDTO();
-            itemDTO.setId(item.getId());
-            itemDTO.setIName(item.getIName());
-            itemDTO.setPrice(item.getPrice());
-            itemDTO.setStockQuantity(item.getStockQuantity());
-            return itemDTO;
-        }).collect(Collectors.toList()));
-        dto.setDdabong(board.getDdabong());
-        return dto;
-    }
-
-    private SiteUserDTO convertToSiteUserDTO(SiteUser user) {
-        if (user == null) {
-            return null;
-        }
-        SiteUserDTO userDTO = new SiteUserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setUsername(user.getUsername());
-        return userDTO;
-    }*/
 }

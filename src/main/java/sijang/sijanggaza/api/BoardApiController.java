@@ -3,6 +3,9 @@ package sijang.sijanggaza.api;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import sijang.sijanggaza.controller.BoardForm;
 import sijang.sijanggaza.controller.ItemBoardForm;
@@ -30,12 +33,14 @@ public class BoardApiController {
     private final ItemService itemService;
 
 
-    /**소식 및 정보 게시글**/
+    /*****************************************소식 및 정보 게시글************************************/
 
     /**
      * 게시글 목록 조회
      */
-    @GetMapping("/api/v1/userBoards")
+    // N+1 문제 해결, 컬렉션 패치 조인으로 페이징 불가
+    // 처음 값과 제한값을 입력하여 페이징과 같은 기능은 가능
+    @GetMapping("/api/v2/userBoards")
     public List<UserBoardResponseDTO> getBoardListOfUser(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam("kw") String kw) {
         Page<Board> boardPage = this.boardService.getListOfUserV2(page, kw);
         List<UserBoardResponseDTO> boardListOfUser = boardPage.stream()
@@ -43,6 +48,9 @@ public class BoardApiController {
                 .collect(Collectors.toList());
         return boardListOfUser;
     }
+
+    /*@GetMapping("/api/v3/userBoards")*/
+
 
     /**
      * 게시글 상세
@@ -90,14 +98,27 @@ public class BoardApiController {
     /**
      * 게시글 목록 조회(N+1 해결)
      */
-    @GetMapping("/api/v1/ceoBoards")
-    public List<CeoBoardResponseDTO> getBoardListOfCeo(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam("kw") String kw) {
+    // N+1 문제 해결, 컬렉션 패치 조인으로 페이징 불가
+    // 처음 값과 제한값을 입력하여 페이징과 같은 기능은 가능
+    @GetMapping("/api/v2/ceoBoards")
+    public List<CeoBoardResponseDTO> getBoardListOfCeoV2(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam("kw") String kw) {
         Page<Board> itemBoardPage = this.boardService.getListOfCeoV2(page, kw);
         List<CeoBoardResponseDTO> boardListOfCeo = itemBoardPage.stream()
                 .map(board -> new CeoBoardResponseDTO(board))
                 .collect(Collectors.toList());
         return boardListOfCeo;
     }
+
+    // 페이징 구현
+    @GetMapping("/api/v3/ceoBoards")
+    public Page<CeoBoardResponseDTO> getBoardListOfCeoV3(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam("kw") String kw) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("postDate"));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
+        Page<CeoBoardResponseDTO> itemBoardPage = this.boardService.getListOfCeoV3(kw, pageable);
+        return itemBoardPage;
+    }
+
 
     /**
      * 게시글 상세

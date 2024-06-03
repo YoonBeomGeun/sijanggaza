@@ -2,25 +2,27 @@ package sijang.sijanggaza.service;
 
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sijang.sijanggaza.controller.BoardForm;
+import sijang.sijanggaza.dto.board.response.CeoBoardResponseDTO;
+import sijang.sijanggaza.dto.item.ItemDto;
 import sijang.sijanggaza.exception.DataNotFoundException;
 import sijang.sijanggaza.domain.Board;
 import sijang.sijanggaza.domain.Comment;
 import sijang.sijanggaza.domain.SiteUser;
 import sijang.sijanggaza.repository.BoardRepository;
 import sijang.sijanggaza.repository.CommentRepository;
+import sijang.sijanggaza.repository.ItemRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +30,7 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
+    private final ItemRepository itemRepository;
 
     public List<Board> getList() {
         return this.boardRepository.findAll();
@@ -73,6 +76,30 @@ public class BoardService {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
         return this.boardRepository.findAllByKeywordOfCeoV2(kw, pageable);
     }
+
+    // map 활용
+    public Page<CeoBoardResponseDTO> getListOfCeoV3(String kw, Pageable pageable) {
+        Page<CeoBoardResponseDTO> boardPage = this.boardRepository.findAllByKeywordOfCeoV3(kw, pageable);
+
+        List<CeoBoardResponseDTO> boards = boardPage.getContent();
+        List<Long> boardIds = boards.stream()
+                .map(CeoBoardResponseDTO::getId)
+                .collect(Collectors.toList());
+
+        List<ItemDto> itemDtoList = itemRepository.findAllDtoByBoardIds(boardIds);
+
+        Map<Long, List<ItemDto>> itemDtoMap = itemDtoList.stream()
+                .collect(Collectors.groupingBy(ItemDto::getBoardId));
+
+        boards.forEach(board -> board.setItemDtoList(itemDtoMap.get(board.getId())));
+
+        return new PageImpl<>(boards, pageable, boardPage.getTotalElements());
+    }
+
+
+
+
+
 
     public Board getBoard(Integer id) {
         Optional<Board> board = this.boardRepository.findById(id);

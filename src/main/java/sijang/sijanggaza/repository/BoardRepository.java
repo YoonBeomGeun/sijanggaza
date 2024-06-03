@@ -1,5 +1,7 @@
 package sijang.sijanggaza.repository;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -9,8 +11,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import sijang.sijanggaza.domain.Board;
+import sijang.sijanggaza.dto.board.response.CeoBoardResponseDTO;
+import sijang.sijanggaza.dto.board.response.UserBoardResponseDTO;
+import sijang.sijanggaza.dto.item.ItemDto;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Integer> {
@@ -25,6 +32,8 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
 
     Page<Board> findAll(Specification<Board> spec, Pageable pageable);
 
+    /**************************************소식 및 정보 게시글******************************************/
+
     @Query("select "
             + "distinct b"
             + " from Board b"
@@ -36,6 +45,10 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
             + " or u1.username like %:kw%)")
     Page<Board> findAllByKeywordOfUserV1(@Param("kw") String kw, Pageable pageable);
 
+    /**
+     * N+1 해결
+     * 컬렉션 패치 조인으로 페이징 불가
+     */
     @Query("select" +
             " b from Board b" +
             " left join fetch b.commentList" +
@@ -47,6 +60,10 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
             " or u.username like %:kw%)")
     Page<Board> findAllByKeywordOfUserV2(@Param("kw") String kw, Pageable pageable);
 
+
+
+
+    /*****************************************상품 게시글*********************************************/
 
     @Query("select "
             + "distinct b"
@@ -61,6 +78,7 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
 
     /**
      * N+1 해결
+     * 컬렉션 패치 조인으로 페이징 불가
      */
     @Query("select" +
             " b from Board b" +
@@ -72,4 +90,19 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
             " or b.content like %:kw%" +
             " or u.username like %:kw%)")
     Page<Board> findAllByKeywordOfCeoV2(@Param("kw") String kw, Pageable pageable);
+
+    /**
+     * V3를 위한 쿼리
+     */
+    @Query("select" +
+            " b from Board b" +
+            " join fetch b.author u" +
+            " where" +
+            " u.status = 'CEO'" +
+            " and(b.title like %:kw%" +
+            " or b.content like %:kw%" +
+            " or u.username like %:kw%)")
+    Page<CeoBoardResponseDTO> findAllByKeywordOfCeoV3(@Param("kw") String kw, Pageable pageable);
+
+
 }

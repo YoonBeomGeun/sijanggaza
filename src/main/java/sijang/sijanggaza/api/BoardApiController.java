@@ -63,7 +63,7 @@ public class BoardApiController {
     /**
      * 게시글 상세
      */
-    @GetMapping("/api/v1/board/{boardId}")
+    @GetMapping("/api/v1/userBoard/{boardId}")
     public UserBoardResponseDTO getUserBoard(@PathVariable("boardId") Integer boardId) {
         Board board = boardService.getBoard(boardId);
         return new UserBoardResponseDTO(board);
@@ -72,7 +72,7 @@ public class BoardApiController {
     /**
      * 게시글 생성
      */
-    @PostMapping("/api/v1/{id}/board")
+    @PostMapping("/api/v1/{id}/userBoard")
     public CreateUserBoardResponseDTO createUserBoard(@PathVariable("id") Long id, @RequestBody @Valid BoardForm boardForm){
         SiteUser user = userService.findOne(id);
         Long boardId = boardService.create(user, boardForm);
@@ -83,7 +83,7 @@ public class BoardApiController {
     /**
      * 게시글 수정
      */
-    @PutMapping("/api/v1/board/{boardId}")
+    @PutMapping("/api/v1/userBoard/{boardId}")
     public ModifyUserBoardResponseDTO modifyUserBoard(@PathVariable("boardId") Integer boardId, @RequestBody @Valid BoardForm boardForm){
         Board targteBoard = this.boardService.getBoard(boardId);
         this.boardService.modify(targteBoard, boardForm.getTitle(), boardForm.getContent());
@@ -132,7 +132,7 @@ public class BoardApiController {
     /**
      * 게시글 상세
      */
-    @GetMapping("/api/v1/itemBoard/{boardId}")
+    @GetMapping("/api/v1/ceoBoard/{boardId}")
     public CeoBoardResponseDTO getCeoBoard(@PathVariable("boardId") Integer boardId) {
         Board board = boardService.getBoard(boardId);
         return new CeoBoardResponseDTO(board);
@@ -141,7 +141,7 @@ public class BoardApiController {
     /**
      * 게시글 생성
      */
-    @PostMapping("/api/v1/{id}/itemBoard")
+    @PostMapping("/api/v1/{id}/ceoBoard")
     public CreateCeoBoardResponseDTO createCeoBoard(@PathVariable("id") Long id, @RequestBody @Valid ItemBoardForm itemBoardForm){
         SiteUser user = userService.findOne(id);
         Board board = this.boardService.itemBoardcreate(itemBoardForm.getTitle(), itemBoardForm.getContent(), user);
@@ -154,12 +154,7 @@ public class BoardApiController {
             itemList.add(item);
             this.itemService.itemCreate(board, item.getIName(), item.getPrice(), item.getStockQuantity());
         }
-        // Null 체크 후에만 itemList를 board에 설정
-        if (board.getItemList() == null) {
-            board.setItemList(new ArrayList<>(itemList));
-        } else {
-            board.getItemList().addAll(itemList);
-        }
+        board.setItemList(itemList);
 
         return new CreateCeoBoardResponseDTO(board);
     }
@@ -167,7 +162,7 @@ public class BoardApiController {
     /**
      * 게시글 수정
      */
-    @PutMapping("/api/v1/itemBoard/{boardId}")
+    @PutMapping("/api/v1/ceoBoard/{boardId}")
     public ModifyCeoBoardResponseDTO modifyCeoBoard(@PathVariable("boardId") Integer boardId, @RequestBody @Valid ItemBoardForm itemBoardForm){
         Board targetboard = this.boardService.getBoard(boardId);
         this.boardService.modify(targetboard, itemBoardForm.getTitle(), itemBoardForm.getContent());

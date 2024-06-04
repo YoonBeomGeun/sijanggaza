@@ -2,6 +2,7 @@ package sijang.sijanggaza.dto.board;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import sijang.sijanggaza.domain.Board;
 import sijang.sijanggaza.dto.comment.CommentDto;
 import sijang.sijanggaza.dto.item.ItemDto;
@@ -13,6 +14,7 @@ import static java.util.stream.Collectors.toList;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class BoardDto {
 
     private Long id;

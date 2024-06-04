@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sijang.sijanggaza.domain.*;
+import sijang.sijanggaza.dto.order.OrderDto;
 import sijang.sijanggaza.repository.ItemRepository;
 import sijang.sijanggaza.repository.OrderRepository;
 import sijang.sijanggaza.repository.UserRepository;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -84,5 +86,13 @@ public class OrderService {
         System.out.println("결과는 : " + this.orderRepository.findAllByKeyword(kw, pageable));
         return this.orderRepository.findAllByKeyword(kw, pageable);
     }*/
+
+    // userMypageV2
+    public List<OrderDto> userMypageForV2(String username) {
+        List<Order> orderList = this.orderRepository.findAllWithItem(username);
+        return orderList.stream()
+                .map(OrderDto::new)
+                .collect(Collectors.toList());
+    }
 
 }

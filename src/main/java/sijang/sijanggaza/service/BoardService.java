@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sijang.sijanggaza.controller.BoardForm;
+import sijang.sijanggaza.domain.Item;
 import sijang.sijanggaza.dto.board.response.CeoBoardResponseDTO;
 import sijang.sijanggaza.dto.board.response.UserBoardResponseDTO;
 import sijang.sijanggaza.dto.comment.CommentDto;
@@ -149,6 +150,18 @@ public class BoardService {
         b.setContent(content);
         b.setPostDate(LocalDateTime.now());
         b.setAuthor(user);
+        this.boardRepository.save(b);
+        return b;
+    }
+
+    @Transactional
+    public Board itemBoardcreateV2(String title, String content, SiteUser user, List<Item> itemList) {
+        Board b = new Board();
+        b.setTitle(title);
+        b.setContent(content);
+        b.setPostDate(LocalDateTime.now());
+        b.setAuthor(user);
+        b.setItemList(itemList);
         this.boardRepository.save(b);
         return b;
     }

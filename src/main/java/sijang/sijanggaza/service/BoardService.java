@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sijang.sijanggaza.controller.BoardForm;
 import sijang.sijanggaza.dto.board.response.CeoBoardResponseDTO;
+import sijang.sijanggaza.dto.board.response.UserBoardResponseDTO;
+import sijang.sijanggaza.dto.comment.CommentDto;
 import sijang.sijanggaza.dto.item.ItemDto;
 import sijang.sijanggaza.exception.DataNotFoundException;
 import sijang.sijanggaza.domain.Board;
@@ -42,7 +44,8 @@ public class BoardService {
 
 
     //게시글 목록 페이징으로 불러오기
-    //회원 유형 == USER
+    /**회원 유형 == USER**/
+    // join
     public Page<Board> getListOfUserV1(int page, String kw) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("postDate"));
@@ -52,15 +55,36 @@ public class BoardService {
         return this.boardRepository.findAllByKeywordOfUserV1(kw, pageable);
     }
 
-    public Page<Board> getListOfUserV2(int page, String kw) {
+    // join fetch
+    public Page<UserBoardResponseDTO> getListOfUserV2(int page, String kw) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("postDate"));
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
         return this.boardRepository.findAllByKeywordOfUserV2(kw, pageable);
     }
 
+    // map 활용, boardId 값 구하고 IN으로 조회
+    public Page<UserBoardResponseDTO> getListOfUserV3(String kw, Pageable pageable) {
+        Page<UserBoardResponseDTO> boardPage = this.boardRepository.findAllByKeywordOfUserV3(kw, pageable);
 
-    //회원 유형 == CEO
+        List<UserBoardResponseDTO> boards = boardPage.getContent();
+        List<Long> boardIds = boards.stream()
+                .map(UserBoardResponseDTO::getId)
+                .collect(Collectors.toList());
+
+        List<CommentDto> commentDtoList = commentRepository.findAllDtoByBoardIds(boardIds);
+
+        Map<Long, List<CommentDto>> commentDtoMap = commentDtoList.stream()
+                .collect(Collectors.groupingBy(CommentDto::getBoardId));
+
+        boards.forEach(board -> board.setCommentDtoList(commentDtoMap.get(board.getId())));
+
+        return new PageImpl<>(boards, pageable, boardPage.getTotalElements());
+    }
+
+
+    /**회원 유형 == CEO**/
+    // join
     public Page<Board> getListOfCeoV1(int page, String kw) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("postDate"));
@@ -70,14 +94,15 @@ public class BoardService {
         return this.boardRepository.findAllByKeywordOfCeoV1(kw, pageable);
     }
 
-    public Page<Board> getListOfCeoV2(int page, String kw) {
+    // join fetch
+    public Page<CeoBoardResponseDTO> getListOfCeoV2(int page, String kw) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("postDate"));
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
         return this.boardRepository.findAllByKeywordOfCeoV2(kw, pageable);
     }
 
-    // map 활용
+    // map 활용, boardId 값 구하고 IN으로 조회
     public Page<CeoBoardResponseDTO> getListOfCeoV3(String kw, Pageable pageable) {
         Page<CeoBoardResponseDTO> boardPage = this.boardRepository.findAllByKeywordOfCeoV3(kw, pageable);
 
@@ -95,10 +120,6 @@ public class BoardService {
 
         return new PageImpl<>(boards, pageable, boardPage.getTotalElements());
     }
-
-
-
-
 
 
     public Board getBoard(Integer id) {

@@ -58,9 +58,17 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
             " and(b.title like %:kw%" +
             " or b.content like %:kw%" +
             " or u.username like %:kw%)")
-    Page<Board> findAllByKeywordOfUserV2(@Param("kw") String kw, Pageable pageable);
+    Page<UserBoardResponseDTO> findAllByKeywordOfUserV2(@Param("kw") String kw, Pageable pageable);
 
-
+    @Query("select" +
+            " b from Board b" +
+            " join fetch b.author u" +
+            " where" +
+            " u.status = 'USER'" +
+            " and(b.title like %:kw%" +
+            " or b.content like %:kw%" +
+            " or u.username like %:kw%)")
+    Page<UserBoardResponseDTO> findAllByKeywordOfUserV3(@Param("kw") String kw, Pageable pageable);
 
 
     /*****************************************상품 게시글*********************************************/
@@ -89,7 +97,7 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
             " and(b.title like %:kw%" +
             " or b.content like %:kw%" +
             " or u.username like %:kw%)")
-    Page<Board> findAllByKeywordOfCeoV2(@Param("kw") String kw, Pageable pageable);
+    Page<CeoBoardResponseDTO> findAllByKeywordOfCeoV2(@Param("kw") String kw, Pageable pageable);
 
     /**
      * V3를 위한 쿼리

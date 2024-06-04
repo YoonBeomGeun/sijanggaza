@@ -17,6 +17,7 @@ public class CommentDto {
     private Long id;
     private String content;
     private String author;
+    private Long boardId;
     private LocalDateTime postDate;
     private LocalDateTime modifyDate;
 
@@ -24,6 +25,7 @@ public class CommentDto {
         id = comment.getId();
         content = comment.getContent();
         author = comment.getAuthor().getUsername();
+        boardId = comment.getBoard() != null ? comment.getBoard().getId() : null;
         postDate = comment.getPostDate();
         modifyDate = comment.getModifyDate();
     }

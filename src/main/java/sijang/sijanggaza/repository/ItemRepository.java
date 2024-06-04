@@ -18,7 +18,7 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
     List<Item> findAllByBoardId(Long boardId);
 
     @Query("select" +
-            " new sijang.sijanggaza.dto.item.ItemDto(i.id, i.iName, i.board.id, i.price, i.stockQuantity)" +
+            " new sijang.sijanggaza.dto.item.ItemDto(i.id, i.iName, b.id, i.price, i.stockQuantity)" +
             " from Item i" +
             " join i.board b" +
             " where b.id in :boardIds")

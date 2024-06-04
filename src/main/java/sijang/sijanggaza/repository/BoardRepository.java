@@ -113,4 +113,12 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
     Page<CeoBoardResponseDTO> findAllByKeywordOfCeoV3(@Param("kw") String kw, Pageable pageable);
 
 
+    /**
+     * 상품 게시글 상세보기
+     */
+    @Query("select b from Board b" +
+            " left join fetch b.author" +
+            " left join fetch b.itemList" +
+            " where b.id = :id")
+    Board findByIdForDetail(@Param("id") Integer id);
 }

@@ -127,14 +127,19 @@ public class BoardApiController {
         Page<CeoBoardResponseDTO> itemBoardPage = this.boardService.getListOfCeoV3(kw, pageable);
         return itemBoardPage;
     }
-
-
+    
     /**
      * 게시글 상세
      */
     @GetMapping("/api/v1/ceoBoard/{boardId}")
-    public CeoBoardResponseDTO getCeoBoard(@PathVariable("boardId") Integer boardId) {
+    public CeoBoardResponseDTO getCeoBoardV1(@PathVariable("boardId") Integer boardId) {
         Board board = boardService.getBoard(boardId);
+        return new CeoBoardResponseDTO(board);
+    }
+
+    @GetMapping("/api/v2/ceoBoard/{boardId}")
+    public CeoBoardResponseDTO getCeoBoardV2(@PathVariable("boardId") Integer boardId) {
+        Board board = boardService.getBoardV2(boardId);
         return new CeoBoardResponseDTO(board);
     }
 

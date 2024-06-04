@@ -122,11 +122,20 @@ public class BoardService {
         return new PageImpl<>(boards, pageable, boardPage.getTotalElements());
     }
 
-
+    // 상세보기
     public Board getBoard(Integer id) {
         Optional<Board> board = this.boardRepository.findById(id);
         if (board.isPresent()) {
             return board.get();
+        } else {
+            throw new DataNotFoundException("question not found");
+        }
+    }
+
+    public Board getBoardV2(Integer id) {
+        Board board = this.boardRepository.findByIdForDetail(id);
+        if (board != null) {
+            return board;
         } else {
             throw new DataNotFoundException("question not found");
         }

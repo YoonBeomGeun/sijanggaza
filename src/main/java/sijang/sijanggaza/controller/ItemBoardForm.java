@@ -47,6 +47,15 @@ public class ItemBoardForm {
             form.setStockquantity(item.getStockQuantity());
             return form;
         }
+
+        @Override
+        public String toString() {
+            return "ItemForm{" +
+                    "name='" + name + '\'' +
+                    ", price=" + price +
+                    ", stockquantity=" + stockquantity +
+                    '}';
+        }
     }
     public static List<ItemForm> fromItems(List<Item> items) {
         List<ItemForm> itemForms = new ArrayList<>();

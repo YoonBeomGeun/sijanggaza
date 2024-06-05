@@ -48,6 +48,13 @@ public class ItemService {
     }
 
     @Transactional
+    public void deleteRemovedItems(List<Item> removedItems) {
+        for (Item removedItem : removedItems) {
+            this.itemRepository.delete(removedItem);
+        }
+    }
+
+    @Transactional
     public void itemDelete(Item item) {
         this.itemRepository.delete(item);
     }
@@ -71,4 +78,5 @@ public class ItemService {
         }
         item.setStockQuantity(restStock);
     }
+
 }

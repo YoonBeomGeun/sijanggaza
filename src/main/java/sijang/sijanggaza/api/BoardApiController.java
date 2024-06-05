@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import sijang.sijanggaza.controller.BoardForm;
 import sijang.sijanggaza.controller.ItemBoardForm;
@@ -17,10 +18,7 @@ import sijang.sijanggaza.service.BoardService;
 import sijang.sijanggaza.service.ItemService;
 import sijang.sijanggaza.service.UserService;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -127,7 +125,7 @@ public class BoardApiController {
         Page<CeoBoardResponseDTO> itemBoardPage = this.boardService.getListOfCeoV3(kw, pageable);
         return itemBoardPage;
     }
-    
+
     /**
      * 게시글 상세
      */
@@ -167,47 +165,55 @@ public class BoardApiController {
     /**
      * 게시글 수정
      */
-    @PutMapping("/api/v1/ceoBoard/{boardId}")
+    @PutMapping("/api/v1.5/ceoBoard/{boardId}")
     public ModifyCeoBoardResponseDTO modifyCeoBoard(@PathVariable("boardId") Integer boardId, @RequestBody @Valid ItemBoardForm itemBoardForm){
         Board targetboard = this.boardService.getBoard(boardId);
         this.boardService.modify(targetboard, itemBoardForm.getTitle(), itemBoardForm.getContent());
 
         List<Item> existingItems = targetboard.getItemList();
+        System.out.println("수정 전: "+existingItems);
 
-        // 업데이트 된 아이템 목록
+        // 업데이트된 아이템 목록
         List<ItemBoardForm.ItemForm> updatedItems = itemBoardForm.getItems();
+        System.out.println("업데이트 내용: "+updatedItems);
 
-        // 기존 아이템과 새로운 아이템 매핑 (아이템 이름과 가격을 조합한 키 사용)
-        Map<String, ItemBoardForm.ItemForm> updatedItemsMap = updatedItems.stream()
-                .collect(Collectors.toMap(itemForm -> itemForm.getName() + "_" + itemForm.getPrice(), Function.identity()));
+        List<Item> deleteBox = new ArrayList<>();
 
-        // 기존 아이템 수정 및 삭제 처리
-        Iterator<Item> existingItemsIterator = existingItems.iterator();
-        while (existingItemsIterator.hasNext()) {
-            Item item = existingItemsIterator.next();
-            String itemKey = item.getIName() + "_" + item.getPrice();
-            ItemBoardForm.ItemForm updatedItemForm = updatedItemsMap.get(itemKey);
-
-            if (updatedItemForm != null) {
-                // 아이템 수정
-                this.itemService.itemModify(item, updatedItemForm.getName(), updatedItemForm.getPrice(), updatedItemForm.getStockquantity());
-                updatedItemsMap.remove(itemKey); // 수정된 아이템은 맵에서 제거
-            } else {
-                // 아이템 삭제
-                this.itemService.itemDelete(item);
-                existingItemsIterator.remove(); // 기존 리스트에서 삭제
+        if (updatedItems.size() == 0) {
+            this.itemService.deleteRemovedItems(existingItems);
+        } else {
+            // 업데이트된 아이템이 있는 경우
+            for (int i = 0; i < Math.max(existingItems.size(), updatedItems.size()); i++) {
+                if (i >= updatedItems.size()) {
+                    // 업데이트된 아이템 목록의 크기를 넘어선 경우, 기존 아이템 삭제
+                    deleteBox.add(existingItems.get(i));
+                } else {
+                    // 업데이트된 아이템이 있는 경우, 아이템 수정 또는 생성
+                    ItemBoardForm.ItemForm updatedItemForm = updatedItems.get(i);
+                    Item existingItem = existingItems.size() > i ? existingItems.get(i) : null;
+                    if (existingItem == null) {
+                        // 기존 아이템이 없으면 새로 생성
+                        Item newItem = new Item();
+                        newItem.setIName(updatedItemForm.getName());
+                        newItem.setBoard(targetboard);
+                        newItem.setPrice(updatedItemForm.getPrice());
+                        newItem.setStockQuantity(updatedItemForm.getStockquantity());
+                        existingItems.add(this.itemService.itemCreate(targetboard, newItem.getIName(), newItem.getPrice(), newItem.getStockQuantity()));
+                    } else {
+                        this.itemService.itemModify(existingItem, updatedItemForm.getName(), updatedItemForm.getPrice(), updatedItemForm.getStockquantity());
+                    }
+                }
             }
         }
+        System.out.println("수정 후: "+existingItems);
 
-        // 새로 추가된 아이템 처리
-        updatedItemsMap.values().forEach(itemForm -> {
-            Item newItem = new Item();
-            newItem.setIName(itemForm.getName());
-            newItem.setPrice(itemForm.getPrice());
-            newItem.setStockQuantity(itemForm.getStockquantity());
-            this.itemService.itemCreate(targetboard, newItem.getIName(), newItem.getPrice(), newItem.getStockQuantity());
-            targetboard.getItemList().add(newItem);
-        });
+        // 삭제할 아이템 삭제
+        existingItems.removeAll(deleteBox);
+        System.out.println(deleteBox);
+
+        //existingItems에서 deleteBox 뺸 다음 set
+        targetboard.setItemList(existingItems);
+        this.boardService.save(targetboard);
 
         return new ModifyCeoBoardResponseDTO(targetboard);
     }

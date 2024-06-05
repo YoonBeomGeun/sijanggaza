@@ -3,7 +3,6 @@ package sijang.sijanggaza.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import sijang.sijanggaza.domain.Board;
 import sijang.sijanggaza.domain.Item;
 import sijang.sijanggaza.dto.item.ItemDto;
 

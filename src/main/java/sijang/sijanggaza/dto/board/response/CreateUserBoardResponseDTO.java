@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import sijang.sijanggaza.domain.Board;
-import sijang.sijanggaza.domain.SiteUser;
 
 import java.time.LocalDateTime;
 

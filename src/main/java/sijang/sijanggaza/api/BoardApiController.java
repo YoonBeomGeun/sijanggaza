@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import sijang.sijanggaza.controller.BoardForm;
 import sijang.sijanggaza.controller.ItemBoardForm;
@@ -19,8 +18,6 @@ import sijang.sijanggaza.service.ItemService;
 import sijang.sijanggaza.service.UserService;
 
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor

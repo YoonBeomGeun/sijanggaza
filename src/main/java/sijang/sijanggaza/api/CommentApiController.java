@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import sijang.sijanggaza.domain.Board;
 import sijang.sijanggaza.domain.Comment;
 import sijang.sijanggaza.domain.SiteUser;
-import sijang.sijanggaza.dto.board.response.DeleteUserBoardResponseDTO;
 import sijang.sijanggaza.dto.comment.CommentDto;
 import sijang.sijanggaza.dto.comment.request.CommentRequestDTO;
 import sijang.sijanggaza.dto.comment.response.CreateCommentResponseDTO;

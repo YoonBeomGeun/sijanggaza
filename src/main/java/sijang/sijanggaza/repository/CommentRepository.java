@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import sijang.sijanggaza.domain.Comment;
 import sijang.sijanggaza.dto.comment.CommentDto;
-import sijang.sijanggaza.dto.item.ItemDto;
 
 import java.util.List;
 

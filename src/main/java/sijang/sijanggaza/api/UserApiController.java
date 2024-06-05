@@ -3,14 +3,12 @@ package sijang.sijanggaza.api;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import sijang.sijanggaza.domain.Order;
 import sijang.sijanggaza.domain.SiteUser;
 import sijang.sijanggaza.dto.order.OrderDto;
 import sijang.sijanggaza.dto.user.UserDto;
 import sijang.sijanggaza.dto.user.request.UserRequestDTO;
 import sijang.sijanggaza.dto.user.response.CreateUserResponseDTO;
 import sijang.sijanggaza.dto.user.response.UserMypageResponseDTO;
-import sijang.sijanggaza.repository.OrderRepository;
 import sijang.sijanggaza.service.OrderService;
 import sijang.sijanggaza.service.UserService;
 

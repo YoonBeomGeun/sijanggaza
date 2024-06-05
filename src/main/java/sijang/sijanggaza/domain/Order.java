@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "orders")
@@ -19,7 +17,6 @@ public class Order {
     @Column(name = "order_id")
     private Long id;
 
-    /*private String oName;*/
     private int orderPrice;
     private int quantity;
     private LocalDateTime orderDate;
@@ -39,10 +36,5 @@ public class Order {
         this.siteUser = siteUser;
         siteUser.getOrderList().add(this);
     }
-
-    /*public void Order(SiteUser siteUser, Item item) {
-        this.siteUser = siteUser;
-        this.item = item;
-    }*/
 
 }

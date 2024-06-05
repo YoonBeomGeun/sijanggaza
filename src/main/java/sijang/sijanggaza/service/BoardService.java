@@ -163,7 +163,7 @@ public class BoardService {
         return b;
     }
 
-    @Transactional
+    /*@Transactional
     public Board itemBoardcreateV2(String title, String content, SiteUser user, List<Item> itemList) {
         Board b = new Board();
         b.setTitle(title);
@@ -173,7 +173,7 @@ public class BoardService {
         b.setItemList(itemList);
         this.boardRepository.save(b);
         return b;
-    }
+    }*/
 
     @Transactional
     public void modify(Board board, String title, String content) {

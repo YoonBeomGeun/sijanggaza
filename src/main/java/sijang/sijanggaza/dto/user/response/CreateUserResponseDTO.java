@@ -1,6 +1,5 @@
 package sijang.sijanggaza.dto.user.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data

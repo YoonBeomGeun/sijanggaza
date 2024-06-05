@@ -2,7 +2,6 @@ package sijang.sijanggaza.dto.order;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import sijang.sijanggaza.domain.Order;
 import sijang.sijanggaza.domain.OrderStatus;
 import sijang.sijanggaza.dto.item.ItemDto;

@@ -1,13 +1,9 @@
 package sijang.sijanggaza.dto.user.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import sijang.sijanggaza.domain.Order;
-import sijang.sijanggaza.domain.SiteUser;
 import sijang.sijanggaza.dto.order.OrderDto;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 public class UserMypageResponseDTO {

@@ -2,6 +2,7 @@ package sijang.sijanggaza.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import sijang.sijanggaza.exception.NotEnoughStockException;
 
 import java.util.List;
 
@@ -40,11 +41,15 @@ public class Item {
     /**
      * stock 감소
      */
-    /*public void removeStock(int quantity) {
+    public void removeStock(int quantity) {
         int restStock = this.stockQuantity - quantity;
         if(restStock < 0) {
             throw new NotEnoughStockException("need more stock");
         }
         this.stockQuantity = restStock;
-    }*/
+    }
+
+    public Item orElseThrow() {
+        return null;
+    }
 }

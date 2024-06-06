@@ -2,6 +2,7 @@ package sijang.sijanggaza.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import sijang.sijanggaza.domain.Board;
 import sijang.sijanggaza.domain.Item;
@@ -70,13 +71,38 @@ public class ItemService {
     /**
      * stock 감소
      */
-    @Transactional
-    public void removeStock(Item item, int quantity) {
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void removeStockV1(Item item, int quantity) {
         int restStock = item.getStockQuantity()-quantity;
         if(restStock<0) {
             throw new NotEnoughStockException("need more stock");
         }
         item.setStockQuantity(restStock);
+    }
+
+    public synchronized void removeStockV1_5(Item item, int quantity) {
+        int restStock = item.getStockQuantity()-quantity;
+        if(restStock<0) {
+            throw new NotEnoughStockException("need more stock");
+        }
+        item.setStockQuantity(restStock);
+    }
+
+    @Transactional
+    public void removeStockV2(Item item, int quantity) {
+        int restStock = item.getStockQuantity()-quantity;
+        if(restStock<0) {
+            throw new NotEnoughStockException("need more stock");
+        }
+        itemRepository.updateRemoveStockUsingQuery(item.getId());
+        item.setStockQuantity(restStock);
+    }
+
+    @Transactional
+    public  void decrease(final int id, final int quantity) {
+        Item item = itemRepository.findById(id).orElseThrow();
+        item.removeStock(quantity);
+        itemRepository.saveAndFlush(item);
     }
 
 }

@@ -20,7 +20,7 @@ spring:
 
 logging:                            # log를 통한 것
   level:
-    org.hibernate.SQL: debug
+#    org.hibernate.SQL: debug
     org.hibernate.type: trace
 
 decorator.datasource.p6spy.enable-logging: true

@@ -1,6 +1,7 @@
 package sijang.sijanggaza;
 
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,12 +9,18 @@ import sijang.sijanggaza.controller.BoardForm;
 import sijang.sijanggaza.domain.*;
 import sijang.sijanggaza.repository.*;
 import sijang.sijanggaza.service.BoardService;
+import sijang.sijanggaza.service.ItemService;
 import sijang.sijanggaza.service.OrderService;
+import sijang.sijanggaza.service.UserService;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -30,6 +37,10 @@ class SijanggazaApplicationTests {
 
 	@Autowired
 	private BoardService boardService;
+	@Autowired
+	private ItemService itemService;
+	@Autowired
+	private UserService userService;
 	@Autowired
 	private OrderService orderService;
 	@Autowired
@@ -161,12 +172,12 @@ class SijanggazaApplicationTests {
 
 	@Test
 	void 댓글저장() {
-		Optional<Board> ob = this.boardRepository.findById(190);
+		Optional<Board> ob = this.boardRepository.findById(1);
 		assertTrue(ob.isPresent());
 		Board b = ob.get();
 
 		Comment c = new Comment();
-		c.setContent("나도 최고");
+		c.setContent("굳");
 		c.setBoard(b);  // 어떤 질문의 답변인지 알기위해서 Question 객체가 필요하다.
 		c.setPostDate(LocalDateTime.now());
 		this.commentRepository.save(c);
@@ -223,4 +234,152 @@ class SijanggazaApplicationTests {
 		this.orderService.testCreate("111", item, 2);
 	}*/
 
+
+	@Test
+	void 회원생성() {
+		for(int i=1;i<=150;i++) {
+			SiteUser user = new SiteUser();
+			user.setUsername(String.format("%d%d%d", i,i,i));
+			user.setPassword(String.format("%d%d%d", i,i,i));
+			user.setEmail(String.format("user%d@naver.com", i));
+			user.setStatus(UserStatus.USER);
+			this.userRepository.save(user);
+
+		}
+
+	}
+
+
+	// TODO ddabong 동시성 테스트
+	@Test
+	@Transactional
+	void 따봉동시성테스트() throws InterruptedException {
+		// 테스트할 보드 ID
+		Board board = this.boardService.getBoard(30);
+		// 동시에 실행할 스레드 수
+		int threadCount = 6;
+		// CountDownLatch를 사용하여 모든 스레드가 동작을 완료할 때까지 대기
+		CountDownLatch latch = new CountDownLatch(threadCount);
+
+		// 스레드 풀 생성
+		ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+
+		// 여러 스레드 생성 및 실행
+		for (int i = 1; i <= threadCount; i++) {
+			Long finalI = (long)i;
+			executor.submit(() -> {
+				try {
+					Optional<SiteUser> os = this.userRepository.findById(finalI);
+					SiteUser user = os.get();
+					// 각 스레드에서 보드를 추천하는 작업 수행
+					boardService.ddabong(board, user);
+				} finally {
+					// 작업이 완료되면 CountDownLatch 카운트 감소
+					latch.countDown();
+				}
+			});
+		}
+
+		// 모든 스레드가 작업을 완료할 때까지 대기
+		latch.await();
+
+		// 보드 추천 수를 확인하는 등의 검증 작업 수행
+		int ddabongSize = boardService.ddabongSize(board);
+		assertEquals(threadCount, ddabongSize);
+	}
+
+	@Test
+	@Transactional
+	public void 따봉_동시성_테스트() throws Exception {
+	    //given
+		long startTime = System.currentTimeMillis();
+		Board board = boardService.getBoard(1);
+
+		int thread = 100;
+		ExecutorService executorService = Executors.newFixedThreadPool(32);
+		CountDownLatch latch = new CountDownLatch(thread);
+
+	    //when
+		for(int i = 1; i <= thread; i++) {
+			int userId = i;
+			executorService.submit(() -> {
+				try {
+					SiteUser user = userService.findOne((long) userId);
+					boardService.ddabong(board, user);
+				} finally {
+					latch.countDown();
+				}
+			});
+		}
+
+		latch.await();
+
+	    //then
+		Double sec = (System.currentTimeMillis() - startTime) / 1000.0;
+		System.out.printf("thread 10개, 소요시간 --> (%.2f초)%n", sec);
+
+		int ddabongSize = boardService.ddabongSize(board);
+		assertEquals(thread, ddabongSize);
+	}
+
+	@Test
+	public void 재고_감소() throws Exception {
+	    //given
+		long startTime = System.currentTimeMillis();
+		Item item = itemRepository.findById(1);
+		int beforeStock = item.getStockQuantity();
+		int k = 3;
+		//when
+	    itemService.removeStockV2(item, k);
+
+	    //then
+		int restStock = item.getStockQuantity();
+
+		Double sec = (System.currentTimeMillis() - startTime) / 1000.0;
+		System.out.printf("소요시간 --> (%.2f초)%n", sec);
+		assertEquals(beforeStock-k, restStock);
+
+	}
+
+	@Test
+	public void 주문_동시성_테스트() throws Exception {
+	    //given
+		long startTime = System.currentTimeMillis();
+
+		Item item = itemRepository.findById(1);
+		System.out.println(item);
+		int beforeStock = item.getStockQuantity();
+		int threadCount = 100;
+		ExecutorService executorService = Executors.newFixedThreadPool(32);
+		CountDownLatch latch = new CountDownLatch(threadCount);
+
+	    //when
+		for (int i = 0; i < threadCount; i++) {
+			executorService.submit(() -> {
+				try {
+					itemService.removeStockV1_5(item, 1);
+				}
+				finally {
+					latch.countDown();
+				}
+			});
+		}
+
+		latch.await();
+
+	    //then
+
+		Double sec = (System.currentTimeMillis() - startTime) / 1000.0;
+		System.out.printf("thread 100개, 소요시간 --> (%.2f초)%n", sec);
+
+		assertEquals(beforeStock-threadCount, item.getStockQuantity());
+	}
+
+
+	@BeforeEach
+	public void before() {
+		Item item = itemRepository.findById(1);
+		item.setStockQuantity(1000);
+		itemRepository.save(item);
+	}
 }

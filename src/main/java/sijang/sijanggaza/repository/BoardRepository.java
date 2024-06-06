@@ -22,6 +22,17 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
 
     List<Board> findByTitleLike(String title);
 
+    /*@Query("select" +
+            " count(b.ddabong) from Board b" +
+            " where b = :board")
+    int countDdabongByBoard(@Param("board") Board board);*/
+
+    /*@Query("SELECT b FROM Board b LEFT JOIN FETCH b.ddabong WHERE b.id = :boardId")
+    Board findBoardWithDdabongById(@Param("boardId") Long boardId);*/
+
+    @Query("SELECT COUNT(d) FROM Board b JOIN b.ddabong d WHERE b = :board")
+    int countDdabongByBoard(@Param("board") Board board);
+
     Page<Board> findAll(Pageable pageable); //JPA에서 지원
 
     Page<Board> findAll(Specification<Board> spec, Pageable pageable);

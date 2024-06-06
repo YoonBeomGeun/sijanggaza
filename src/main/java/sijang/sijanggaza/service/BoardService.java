@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import sijang.sijanggaza.controller.BoardForm;
 import sijang.sijanggaza.domain.Item;
@@ -21,10 +22,7 @@ import sijang.sijanggaza.repository.CommentRepository;
 import sijang.sijanggaza.repository.ItemRepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -128,7 +126,7 @@ public class BoardService {
         if (board.isPresent()) {
             return board.get();
         } else {
-            throw new DataNotFoundException("question not found");
+            throw new DataNotFoundException("board not found");
         }
     }
 
@@ -137,7 +135,7 @@ public class BoardService {
         if (board != null) {
             return board;
         } else {
-            throw new DataNotFoundException("question not found");
+            throw new DataNotFoundException("board not found");
         }
     }
 
@@ -175,7 +173,7 @@ public class BoardService {
         return b;
     }*/
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void modify(Board board, String title, String content) {
         board.setTitle(title);
         board.setContent(content);
@@ -188,10 +186,26 @@ public class BoardService {
         this.boardRepository.delete(board);
     }
 
+    @Transactional
     public void ddabong(Board board, SiteUser siteUser) {
         board.getDdabong().add(siteUser);
         this.boardRepository.save(board);
     }
+    @Transactional
+    public int ddabongSize(Board board) {
+        return board.getDdabong().size();
+    }
+
+    @Transactional
+    public int countDdabongByBoard(Board board) {
+        return this.boardRepository.countDdabongByBoard(board);
+    }
+
+
+
+
+
+
 
     private Specification<Board> search(String kw) {
         return new Specification<>() {
@@ -210,5 +224,4 @@ public class BoardService {
             }
         };
     }
-
 }

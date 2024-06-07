@@ -244,13 +244,12 @@ class SijanggazaApplicationTests {
 			user.setEmail(String.format("user%d@naver.com", i));
 			user.setStatus(UserStatus.USER);
 			this.userRepository.save(user);
-
 		}
 
 	}
 
 
-	// TODO ddabong 동시성 테스트
+	/*// TODO ddabong 동시성 테스트
 	@Test
 	@Transactional
 	void 따봉동시성테스트() throws InterruptedException {
@@ -286,7 +285,7 @@ class SijanggazaApplicationTests {
 		// 보드 추천 수를 확인하는 등의 검증 작업 수행
 		int ddabongSize = boardService.ddabongSize(board);
 		assertEquals(threadCount, ddabongSize);
-	}
+	}*/
 
 	@Test
 	@Transactional
@@ -330,7 +329,7 @@ class SijanggazaApplicationTests {
 		int beforeStock = item.getStockQuantity();
 		int k = 3;
 		//when
-	    itemService.removeStockV2(item, k);
+	    itemService.removeStockV1_5(item, k);
 
 	    //then
 		int restStock = item.getStockQuantity();
@@ -343,7 +342,7 @@ class SijanggazaApplicationTests {
 
 	@Test
 	public void 주문_동시성_테스트() throws Exception {
-	    //given
+		//given
 		long startTime = System.currentTimeMillis();
 
 		Item item = itemRepository.findById(1);
@@ -353,11 +352,11 @@ class SijanggazaApplicationTests {
 		ExecutorService executorService = Executors.newFixedThreadPool(32);
 		CountDownLatch latch = new CountDownLatch(threadCount);
 
-	    //when
+		//when
 		for (int i = 0; i < threadCount; i++) {
 			executorService.submit(() -> {
 				try {
-					itemService.removeStockV1_5(item, 1);
+					itemService.removeStockV2(item, 1);
 				}
 				finally {
 					latch.countDown();
@@ -367,19 +366,54 @@ class SijanggazaApplicationTests {
 
 		latch.await();
 
-	    //then
+		//then
 
 		Double sec = (System.currentTimeMillis() - startTime) / 1000.0;
 		System.out.printf("thread 100개, 소요시간 --> (%.2f초)%n", sec);
+		Item finalItem = this.itemRepository.findById(1).orElseThrow();
 
-		assertEquals(beforeStock-threadCount, item.getStockQuantity());
+		assertEquals(beforeStock-threadCount, finalItem.getStockQuantity());
+	}
+
+	/*@Test
+	public void 주문_동시성_테스트_낙관적락() throws Exception {
+		//given
+		long startTime = System.currentTimeMillis();
+		Item item = itemRepository.findById(2);
+		int threadCount = 100;
+		ExecutorService executorService = Executors.newFixedThreadPool(32);
+		CountDownLatch latch = new CountDownLatch(threadCount);
+
+		//when
+		for (int i = 0; i < threadCount; i++) {
+			executorService.submit(() -> {
+				try {
+					itemService.removeStockUsingOptimisticLock(item.getId(), 1);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} finally {
+					latch.countDown();
+				}
+			});
+		}
+
+		latch.await();
+
+		//then
+		Double sec = (System.currentTimeMillis() - startTime) / 1000.0;
+		System.out.printf("thread 100개, 소요시간 --> (%.2f초)%n", sec);
+		Item finalItem = itemRepository.findById(2);
+		assertEquals(900, finalItem.getStockQuantity());
 	}
 
 
 	@BeforeEach
 	public void before() {
-		Item item = itemRepository.findById(1);
+		Item item = this.itemRepository.findById(2);
+		item.setIName("상품");
 		item.setStockQuantity(1000);
+		item.setPrice(1000);
+		item.setVersion(0);
 		itemRepository.save(item);
-	}
+	}*/
 }

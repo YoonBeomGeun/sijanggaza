@@ -14,13 +14,16 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        jdbc:
+          batch_versioned_data: true
         #        show_sql: true             System.out.print를 통한 것
         format_sql: true
         default_batch_fetch_size: 100
 
 logging:                            # log를 통한 것
   level:
-#    org.hibernate.SQL: debug
+    org.hibernate.SQL: debug
     org.hibernate.type: trace
 
 decorator.datasource.p6spy.enable-logging: true

@@ -206,11 +206,11 @@ class SijanggazaApplicationTests {
 
 	@Test
 	void 페이징테스트데이터생성() {
-		Optional<SiteUser> os = userRepository.findByusername("111");
+		Optional<SiteUser> os = userRepository.findByusername("범근님");
 		SiteUser user = os.get();
-		for(int i=1; i<=150; i++) {
-			String title = String.format("테스트 데이터 생성:[%03d]", i);
-			String content = String.format("테스트 데이터 내용:[%03d]", i);
+		for(int i=1; i<=20; i++) {
+			String title = String.format("시장을 소개합니다.(부산)");
+			String content = String.format("부산 시장입니다.:[%02d]", i);
 			BoardForm b = new BoardForm();
 			b.setTitle(title);
 			b.setContent(content);

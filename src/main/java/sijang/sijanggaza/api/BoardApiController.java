@@ -31,6 +31,15 @@ public class BoardApiController {
     /*****************************************소식 및 정보 게시글************************************/
 
     /**
+     * batch_fetch_size 미설정 시 댓글에 대한 N+1 문제 발생
+     */
+    @GetMapping("/api/v0/userBoards")
+    public Page<UserBoardResponseDTO> getBoardListOfUserV0(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam("kw") String kw) {
+        Page<UserBoardResponseDTO> boardPage = this.boardService.getListOfUserV0(page, kw);
+        return boardPage;
+    }
+
+    /**
      * 게시글 목록 조회
      * N+1 문제 해결, 컬렉션 패치 조인으로 페이징 불가할 수 있음
      */

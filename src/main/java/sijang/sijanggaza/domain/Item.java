@@ -16,7 +16,7 @@ public class Item {
     @Column(name = "item_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY) // JoinColumn 없을 시, 디폴트 전략으로 board_id를 외래키로 가짐.
     private Board board;
 
     @Column(length = 100)

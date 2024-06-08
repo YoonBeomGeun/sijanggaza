@@ -44,6 +44,14 @@ public class BoardService {
 
     //게시글 목록 페이징으로 불러오기
     /**회원 유형 == USER**/
+
+    public Page<UserBoardResponseDTO> getListOfUserV0(int page, String kw) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("postDate"));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
+        return this.boardRepository.findAllByKeywordOfUserV0(kw, pageable);
+    }
+
     // join
     public Page<Board> getListOfUserV1(int page, String kw) {
         List<Sort.Order> sorts = new ArrayList<>();

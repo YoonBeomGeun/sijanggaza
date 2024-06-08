@@ -39,6 +39,16 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
 
     /**************************************소식 및 정보 게시글******************************************/
 
+    @Query("select" +
+            " b from Board b" +
+            " join fetch b.author u" +
+            " where" +
+            " u.status = 'USER'" +
+            " and(b.title like %:kw%" +
+            " or b.content like %:kw%" +
+            " or u.username like %:kw%)")
+    Page<UserBoardResponseDTO> findAllByKeywordOfUserV0(@Param("kw") String kw, Pageable pageable);
+
     @Query("select "
             + "distinct b"
             + " from Board b"

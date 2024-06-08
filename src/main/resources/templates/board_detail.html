@@ -1,7 +1,7 @@
 <html layout:decorate="~{layout}" xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
 <div layout:fragment="content" class="container my-3">
     <!-- 질문 -->
-    <a th:href="@{/board/list}" style="text-decoration: none;">목록으로</a>
+    <a th:href="@{/board/list}" style="text-decoration: none; color: #9277EF; font-weight: bold;">목록으로</a>
     <h2 class="border-bottom py-2" th:text="${board.title}"></h2>
     <div class="card my-3">
         <div class="card-body">
@@ -78,7 +78,7 @@
         <div th:replace="~{form_errors :: formErrorsFragment}"></div>
         <textarea sec:authorize="isAnonymous()" disabled th:field="*{content}" class="form-control" rows="10"></textarea>
         <textarea sec:authorize="isAuthenticated()" th:field="*{content}" class="form-control" rows="10"></textarea>
-        <input type="submit" value="댓글 등록" class="btn btn-primary my-2">
+        <input type="submit" value="댓글 등록" class="btn btn-primary my-2" style="background: #9277EF; border: #9277EF;">
     </form>
 </div>
 <script layout:fragment="script" type='text/javascript'>

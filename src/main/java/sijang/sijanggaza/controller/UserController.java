@@ -39,7 +39,7 @@ public class UserController {
 
         if(!userCreateForm.getPassword1().equals(userCreateForm.getPassword2())) {
             result.rejectValue("password2", "passwordInCorrect",
-                    "패스워드가 일치하지 않습니다.");
+                    "비밀번호가 일치하지 않습니다.");
             return "signup_form";
         }
 

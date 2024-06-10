@@ -345,7 +345,7 @@ class SijanggazaApplicationTests {
 		//given
 		long startTime = System.currentTimeMillis();
 
-		Item item = itemRepository.findById(1);
+		Item item = itemRepository.findById(35);
 		System.out.println(item);
 		int beforeStock = item.getStockQuantity();
 		int threadCount = 100;
@@ -370,7 +370,7 @@ class SijanggazaApplicationTests {
 
 		Double sec = (System.currentTimeMillis() - startTime) / 1000.0;
 		System.out.printf("thread 100개, 소요시간 --> (%.2f초)%n", sec);
-		Item finalItem = this.itemRepository.findById(1).orElseThrow();
+		Item finalItem = this.itemRepository.findById(35);
 
 		assertEquals(beforeStock-threadCount, finalItem.getStockQuantity());
 	}

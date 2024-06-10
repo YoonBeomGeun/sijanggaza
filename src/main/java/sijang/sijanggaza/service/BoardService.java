@@ -45,11 +45,13 @@ public class BoardService {
     //게시글 목록 페이징으로 불러오기
     /**회원 유형 == USER**/
 
-    public Page<UserBoardResponseDTO> getListOfUserV0(int page, String kw) {
+    public Page<UserBoardResponseDTO> getListOfUserV1_5(int page, String kw) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("postDate"));
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
-        return this.boardRepository.findAllByKeywordOfUserV0(kw, pageable);
+        Page<Board> boards = this.boardRepository.findAllByKeywordOfUserV1_5(kw, pageable);
+        Page<UserBoardResponseDTO> boardsDTO = boards.map(UserBoardResponseDTO::new);
+        return boardsDTO;
     }
 
     // join
@@ -67,19 +69,27 @@ public class BoardService {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("postDate"));
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
-        return this.boardRepository.findAllByKeywordOfUserV2(kw, pageable);
+        Page<Board> boards = this.boardRepository.findAllByKeywordOfUserV2(kw, pageable);
+        Page<UserBoardResponseDTO> boardPage = boards.map(UserBoardResponseDTO::new);
+        return boardPage;
     }
 
     // map 활용, boardId 값 구하고 IN으로 조회
     public Page<UserBoardResponseDTO> getListOfUserV3(String kw, Pageable pageable) {
-        Page<UserBoardResponseDTO> boardPage = this.boardRepository.findAllByKeywordOfUserV3(kw, pageable);
+        Page<Board> boardPage = this.boardRepository.findAllByKeywordOfUserV3(kw, pageable);
 
-        List<UserBoardResponseDTO> boards = boardPage.getContent();
+        List<UserBoardResponseDTO> boards = boardPage.getContent().stream()
+                .map(UserBoardResponseDTO::new)
+                .collect(Collectors.toList());
+
         List<Long> boardIds = boards.stream()
                 .map(UserBoardResponseDTO::getId)
                 .collect(Collectors.toList());
 
-        List<CommentDto> commentDtoList = commentRepository.findAllDtoByBoardIds(boardIds);
+        List<Comment> comments = commentRepository.findAllByBoardIds(boardIds);
+        List<CommentDto> commentDtoList = comments.stream()
+                .map(CommentDto::new)
+                .collect(Collectors.toList());
 
         Map<Long, List<CommentDto>> commentDtoMap = commentDtoList.stream()
                 .collect(Collectors.groupingBy(CommentDto::getBoardId));

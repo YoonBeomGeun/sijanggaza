@@ -19,9 +19,8 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     List<Comment> findAllComment(@Param("boardId") Long boardId);
 
     @Query("select" +
-            " new sijang.sijanggaza.dto.comment.CommentDto(c.id, c.content, c.author.username, b.id, c.postDate, c.modifyDate)" +
-            " from Comment c" +
+            " c from Comment c" +
             " join c.board b" +
             " where b.id in :boardIds")
-    List<CommentDto> findAllDtoByBoardIds(@Param("boardIds") List<Long> boardIds);
+    List<Comment> findAllByBoardIds(@Param("boardIds") List<Long> boardIds);
 }

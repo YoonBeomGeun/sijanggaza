@@ -31,11 +31,11 @@ public class BoardApiController {
     /*****************************************소식 및 정보 게시글************************************/
 
     /**
-     * batch_fetch_size 미설정 시 댓글에 대한 N+1 문제 발생
+     * batch_fetch_size 미 설정 시 댓글에 대한 N+1 문제 발생
      */
-    @GetMapping("/api/v0/userBoards")
-    public Page<UserBoardResponseDTO> getBoardListOfUserV0(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam("kw") String kw) {
-        Page<UserBoardResponseDTO> boardPage = this.boardService.getListOfUserV0(page, kw);
+    @GetMapping("/api/v1_5/userBoards")
+    public Page<UserBoardResponseDTO> getBoardListOfUserV1_5(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "kw", defaultValue = "") String kw) {
+        Page<UserBoardResponseDTO> boardPage = this.boardService.getListOfUserV1_5(page, kw);
         return boardPage;
     }
 
@@ -44,7 +44,7 @@ public class BoardApiController {
      * N+1 문제 해결, 컬렉션 패치 조인으로 페이징 불가할 수 있음
      */
     @GetMapping("/api/v2/userBoards")
-    public Page<UserBoardResponseDTO> getBoardListOfUserV2(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam("kw") String kw) {
+    public Page<UserBoardResponseDTO> getBoardListOfUserV2(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "kw", defaultValue = "") String kw) {
         Page<UserBoardResponseDTO> boardPage = this.boardService.getListOfUserV2(page, kw);
         return boardPage;
     }
@@ -55,7 +55,7 @@ public class BoardApiController {
      * batch_fetch_size로 N+1 문제 방지
      */
     @GetMapping("/api/v3/userBoards")
-    public Page<UserBoardResponseDTO> getBoardListOfUserV3(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam("kw") String kw) {
+    public Page<UserBoardResponseDTO> getBoardListOfUserV3(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "kw", defaultValue = "") String kw) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("postDate"));
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
@@ -112,7 +112,7 @@ public class BoardApiController {
      * N+1 문제 해결, 컬렉션 패치 조인으로 페이징 불가할 수 있음
      */
     @GetMapping("/api/v2/ceoBoards")
-    public Page<CeoBoardResponseDTO> getBoardListOfCeoV2(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam("kw") String kw) {
+    public Page<CeoBoardResponseDTO> getBoardListOfCeoV2(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "kw", defaultValue = "") String kw) {
         Page<CeoBoardResponseDTO> itemBoardPage = this.boardService.getListOfCeoV2(page, kw);
 
         return itemBoardPage;
@@ -124,7 +124,7 @@ public class BoardApiController {
      * batch_fetch_size로 N+1 문제 방지
      */
     @GetMapping("/api/v3/ceoBoards")
-    public Page<CeoBoardResponseDTO> getBoardListOfCeoV3(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam("kw") String kw) {
+    public Page<CeoBoardResponseDTO> getBoardListOfCeoV3(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "kw", defaultValue = "") String kw) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("postDate"));
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));

@@ -29,9 +29,6 @@ public class Item {
 
     private int stockQuantity;
 
-    @Version
-    private Integer version;
-
     /*//==비지니스 로직==//*/
     /**
      * stock 증가

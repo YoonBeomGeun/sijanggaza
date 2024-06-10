@@ -45,6 +45,10 @@ public class OrderController {
             model.addAttribute("errorMessage", "재고 수량이 부족합니다.");
             model.addAttribute("board", board);
             return "board_itemDetail";
+        } else if (item.getPrice() * orderForm.getQuantity() == 0 && orderForm.getQuantity() > 1) {
+            model.addAttribute("errorMessage", "가격이 '0'인 상품은 최대 1개만 구매 가능합니다.");
+            model.addAttribute("board", board);
+            return "board_itemDetail";
         }
 
         this.orderService.create(siteUser, item, orderForm.getQuantity());

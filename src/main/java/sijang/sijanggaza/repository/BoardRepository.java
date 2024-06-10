@@ -30,7 +30,7 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
     /*@Query("SELECT b FROM Board b LEFT JOIN FETCH b.ddabong WHERE b.id = :boardId")
     Board findBoardWithDdabongById(@Param("boardId") Long boardId);*/
 
-    @Query("SELECT COUNT(d) FROM Board b JOIN b.ddabong d WHERE b = :board")
+    @Query("select count(d) from Board b join b.ddabong d where b = :board")
     int countDdabongByBoard(@Param("board") Board board);
 
     Page<Board> findAll(Pageable pageable); //JPA에서 지원
@@ -38,16 +38,6 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
     Page<Board> findAll(Specification<Board> spec, Pageable pageable);
 
     /**************************************소식 및 정보 게시글******************************************/
-
-    @Query("select" +
-            " b from Board b" +
-            " join fetch b.author u" +
-            " where" +
-            " u.status = 'USER'" +
-            " and(b.title like %:kw%" +
-            " or b.content like %:kw%" +
-            " or u.username like %:kw%)")
-    Page<UserBoardResponseDTO> findAllByKeywordOfUserV0(@Param("kw") String kw, Pageable pageable);
 
     @Query("select "
             + "distinct b"
@@ -59,6 +49,16 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
             + " or b.content like %:kw%"
             + " or u1.username like %:kw%)")
     Page<Board> findAllByKeywordOfUserV1(@Param("kw") String kw, Pageable pageable);
+
+    @Query("select" +
+            " b from Board b" +
+            " join fetch b.author u" +
+            " where" +
+            " u.status = 'USER'" +
+            " and(b.title like %:kw%" +
+            " or b.content like %:kw%" +
+            " or u.username like %:kw%)")
+    Page<Board> findAllByKeywordOfUserV1_5(@Param("kw") String kw, Pageable pageable);
 
     /**
      * N+1 해결
@@ -73,7 +73,7 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
             " and(b.title like %:kw%" +
             " or b.content like %:kw%" +
             " or u.username like %:kw%)")
-    Page<UserBoardResponseDTO> findAllByKeywordOfUserV2(@Param("kw") String kw, Pageable pageable);
+    Page<Board> findAllByKeywordOfUserV2(@Param("kw") String kw, Pageable pageable);
 
     @Query("select" +
             " b from Board b" +
@@ -83,7 +83,7 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
             " and(b.title like %:kw%" +
             " or b.content like %:kw%" +
             " or u.username like %:kw%)")
-    Page<UserBoardResponseDTO> findAllByKeywordOfUserV3(@Param("kw") String kw, Pageable pageable);
+    Page<Board> findAllByKeywordOfUserV3(@Param("kw") String kw, Pageable pageable);
 
 
     /*****************************************상품 게시글*********************************************/

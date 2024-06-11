@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import sijang.sijanggaza.domain.Board;
+import sijang.sijanggaza.dto.comment.CommentDto;
 import sijang.sijanggaza.dto.item.ItemDto;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ public class CeoBoardResponseDTO {
     private String author;
     private LocalDateTime postDate;
     private LocalDateTime modifyDate;
+    private List<CommentDto> commentDtoList;
     private List<ItemDto> itemDtoList;
 
     public CeoBoardResponseDTO(Board board) {
@@ -29,6 +31,9 @@ public class CeoBoardResponseDTO {
         author = board.getAuthor().getUsername();
         postDate = board.getPostDate();
         modifyDate = board.getModifyDate();
+        commentDtoList = board.getCommentList().stream()
+                .map(comment -> new CommentDto(comment))
+                .collect(Collectors.toList());
         itemDtoList = board.getItemList().stream()
                 .map(item -> new ItemDto(item))
                 .collect(Collectors.toList());

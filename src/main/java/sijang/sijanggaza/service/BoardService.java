@@ -20,6 +20,7 @@ import sijang.sijanggaza.domain.SiteUser;
 import sijang.sijanggaza.repository.BoardRepository;
 import sijang.sijanggaza.repository.CommentRepository;
 import sijang.sijanggaza.repository.ItemRepository;
+import sijang.sijanggaza.repository.query.BoardQueryRepository;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final BoardQueryRepository boardQueryRepository;
     private final CommentRepository commentRepository;
     private final ItemRepository itemRepository;
 
@@ -49,7 +51,7 @@ public class BoardService {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("postDate"));
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
-        Page<Board> boards = this.boardRepository.findAllByKeywordOfUserV1_5(kw, pageable);
+        Page<Board> boards = this.boardQueryRepository.findAllByKeywordOfUserV1_5(kw, pageable);
         Page<UserBoardResponseDTO> boardsDTO = boards.map(UserBoardResponseDTO::new);
         return boardsDTO;
     }
@@ -61,7 +63,7 @@ public class BoardService {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
         /*Specification<Board> spec = search(kw); // Specification 방법으로 검색
         return this.boardRepository.findAll(spec, pageable);*/
-        return this.boardRepository.findAllByKeywordOfUserV1(kw, pageable);
+        return this.boardQueryRepository.findAllByKeywordOfUserV1(kw, pageable);
     }
 
     // join fetch
@@ -69,14 +71,14 @@ public class BoardService {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("postDate"));
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
-        Page<Board> boards = this.boardRepository.findAllByKeywordOfUserV2(kw, pageable);
+        Page<Board> boards = this.boardQueryRepository.findAllByKeywordOfUserV2(kw, pageable);
         Page<UserBoardResponseDTO> boardPage = boards.map(UserBoardResponseDTO::new);
         return boardPage;
     }
 
     // map 활용, boardId 값 구하고 IN으로 조회
     public Page<UserBoardResponseDTO> getListOfUserV3(String kw, Pageable pageable) {
-        Page<Board> boardPage = this.boardRepository.findAllByKeywordOfUserV3(kw, pageable);
+        Page<Board> boardPage = this.boardQueryRepository.findAllByKeywordOfUserV3(kw, pageable);
 
         List<UserBoardResponseDTO> boards = boardPage.getContent().stream()
                 .map(UserBoardResponseDTO::new)
@@ -108,7 +110,16 @@ public class BoardService {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
         /*Specification<Board> spec = search(kw); // Specification 방법으로 검색
         return this.boardRepository.findAll(spec, pageable);*/
-        return this.boardRepository.findAllByKeywordOfCeoV1(kw, pageable);
+        return this.boardQueryRepository.findAllByKeywordOfCeoV1(kw, pageable);
+    }
+
+    public Page<CeoBoardResponseDTO> getListOfCeoV1_5(int page, String kw) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("postDate"));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
+        Page<Board> boards = this.boardQueryRepository.findAllByKeywordOfCeoV1_5(kw, pageable);
+        Page<CeoBoardResponseDTO> boardsDTO = boards.map(CeoBoardResponseDTO::new);
+        return boardsDTO;
     }
 
     // join fetch
@@ -116,26 +127,38 @@ public class BoardService {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("postDate"));
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
-        return this.boardRepository.findAllByKeywordOfCeoV2(kw, pageable);
+        Page<Board> boards = this.boardQueryRepository.findAllByKeywordOfCeoV2(kw, pageable);
+        Page<CeoBoardResponseDTO> boardPage = boards.map(CeoBoardResponseDTO::new);
+        return boardPage;
     }
 
     // map 활용, boardId 값 구하고 IN으로 조회
     public Page<CeoBoardResponseDTO> getListOfCeoV3(String kw, Pageable pageable) {
-        Page<CeoBoardResponseDTO> boardPage = this.boardRepository.findAllByKeywordOfCeoV3(kw, pageable);
+        Page<Board> boardPage = this.boardQueryRepository.findAllByKeywordOfCeoV1_5(kw, pageable);
 
-        List<CeoBoardResponseDTO> boards = boardPage.getContent();
-        List<Long> boardIds = boards.stream()
-                .map(CeoBoardResponseDTO::getId)
+        List<Long> boardIds = boardPage.getContent().stream()
+                .map(Board::getId)
                 .collect(Collectors.toList());
 
-        List<ItemDto> itemDtoList = itemRepository.findAllDtoByBoardIds(boardIds);
+        List<Comment> comments = commentRepository.findAllByBoardIds(boardIds);
+        List<Item> items = itemRepository.findAllByBoardIds(boardIds);
 
-        Map<Long, List<ItemDto>> itemDtoMap = itemDtoList.stream()
+        Map<Long, List<CommentDto>> commentDtoMap = comments.stream()
+                .map(CommentDto::new)
+                .collect(Collectors.groupingBy(CommentDto::getBoardId));
+
+        Map<Long, List<ItemDto>> itemDtoMap = items.stream()
+                .map(ItemDto::new)
                 .collect(Collectors.groupingBy(ItemDto::getBoardId));
 
-        boards.forEach(board -> board.setItemDtoList(itemDtoMap.get(board.getId())));
+        Page<CeoBoardResponseDTO> boards = boardPage.map(board -> {
+            CeoBoardResponseDTO dto = new CeoBoardResponseDTO(board);
+            dto.setCommentDtoList(commentDtoMap.get(board.getId()));
+            dto.setItemDtoList(itemDtoMap.get(board.getId()));
+            return dto;
+        });
 
-        return new PageImpl<>(boards, pageable, boardPage.getTotalElements());
+        return boards;
     }
 
     // 상세보기
@@ -149,7 +172,7 @@ public class BoardService {
     }
 
     public Board getBoardV2(Integer id) {
-        Board board = this.boardRepository.findByIdForDetail(id);
+        Board board = this.boardQueryRepository.findByIdForDetail(id);
         if (board != null) {
             return board;
         } else {

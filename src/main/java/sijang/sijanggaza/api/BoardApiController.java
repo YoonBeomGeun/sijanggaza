@@ -107,6 +107,13 @@ public class BoardApiController {
 
     /******************************************************상품 게시글************************************************************/
 
+    @GetMapping("/api/v1_5/ceoBoards")
+    public Page<CeoBoardResponseDTO> getBoardListOfCeoV1_5(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "kw", defaultValue = "") String kw) {
+        Page<CeoBoardResponseDTO> itemBoardPage = this.boardService.getListOfCeoV1_5(page, kw);
+
+        return itemBoardPage;
+    }
+
     /**
      * 게시글 목록 조회
      * N+1 문제 해결, 컬렉션 패치 조인으로 페이징 불가할 수 있음

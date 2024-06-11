@@ -39,7 +39,7 @@ public class OrderService {
         orders.setSiteUser(user);
         orders.setItem(item);
         orders.setStatus(OrderStatus.ORDER);
-        this.itemService.removeStockV1(item, quantity);
+        this.itemService.removeStockV2(item, quantity);
 
         this.orderRepository.save(orders);
     }

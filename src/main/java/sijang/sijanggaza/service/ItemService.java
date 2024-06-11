@@ -113,15 +113,14 @@ public class ItemService {
             try {
                 removeStockV3(id, quantity);
                 break;
-            } catch (OptimisticLockingFailureException e) {  // 구체적인 예외 처리
+            } catch (OptimisticLockingFailureException e) {  // 구체적인 예외 처리 추가하면 됨
                 retryCount++;
                 if (retryCount >= maxRetries) {
-                    throw e;  // 최대 재시도 횟수를 초과한 경우 예외를 던집니다.
+                    throw e;
                 }
                 Thread.sleep(50);
                 System.out.println("동시성 제어중,, 재시도 횟수: " + retryCount);
             } catch (Exception e) {
-                // 기타 예외 처리: 예상치 못한 예외는 로깅하거나 별도로 처리합니다.
                 System.err.println("예기치 못한 오류 발생: " + e.getMessage());
                 throw e;
             }

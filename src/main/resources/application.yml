@@ -28,3 +28,13 @@ logging:                            # log를 통한 것
 
 decorator.datasource.p6spy.enable-logging: true
 
+springdoc:
+  packages-to-scan: sijang.sijanggaza.api
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    path: /api
+    disable-swagger-default-url: true
+    display-request-duration: true
+    operations-sorter: alpha
+

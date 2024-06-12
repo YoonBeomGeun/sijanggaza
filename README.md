@@ -39,7 +39,6 @@
 
 <img src="https://github.com/YoonBeomGeun/sijanggaza/assets/145637270/598adaae-f624-4860-b5ff-a67c28905341" alt="ERD" width="800" heigth="800">
 
-## 상세 설명
+## 프로젝트 보기
 
-
-
+[준비_시장_프로젝트(PDF)](https://github.com/user-attachments/files/15806952/_.pdf)

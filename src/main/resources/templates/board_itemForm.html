@@ -30,9 +30,10 @@
     </form>
 </div>
 
-<script layout:fragment="script" type='text/javascript'>
+<script layout:fragment="script" th:inline="javascript" type='text/javascript'>
 document.addEventListener('DOMContentLoaded', function() {
-    let itemIndex = /*[[${itemBoardForm.items.size()}]]*/ 0; // 초기 인덱스를 서버에서 받은 아이템 수로 설정
+    let itemIndex = /*[[${itemListSize}]]*/ 0; // 초기 인덱스를 서버에서 받은 아이템 수로 설정
+    console.log("아이템 크기: ", itemIndex);
 
     document.getElementById('add-button').addEventListener('click', function() {
         const newItemForm = document.createElement('div');
@@ -59,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 element.querySelector('input[name^="items["][name$="].stockquantity"]').name = `items[${index}].stockquantity`;
             });
 
-            itemIndex--; // 아이템 인덱스 감소
+            itemIndex--;
         }
     });
 });

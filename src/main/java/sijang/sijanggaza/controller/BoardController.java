@@ -157,7 +157,7 @@ public class BoardController {
     //회원 유형 == CEO, 게시글 수정
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/itemModify/{id}")
-    public String boardItemModify(ItemBoardForm itemBoardForm, @PathVariable("id") Integer id, Principal principal, Model model) {
+    public String boardItemModify(ItemBoardForm itemBoardForm, @PathVariable("id") Integer id, Principal principal) {
         Board board = this.boardService.getBoard(id);
         if(!board.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
@@ -167,7 +167,6 @@ public class BoardController {
         List<Item> items = board.getItemList();
         System.out.println("아이템 리스트의 크기 = " + items.size());
         itemBoardForm.setItems(ItemBoardForm.fromItems(items));
-        model.addAttribute("itemListSize", items.size());
 
         return "board_itemForm";
     }
@@ -188,8 +187,6 @@ public class BoardController {
         this.boardService.modify(board, itemBoardForm.getTitle(), itemBoardForm.getContent());
 
         List<Item> existingItems = this.itemService.getItem(board);  // 기존 아이템 리스트 가져오기
-        System.out.println("기존 상품 사이즈" + existingItems.size());
-        System.out.println("변경 상품 사이즈" + itemBoardForm.getItems().size());
         List<Item> updatedItems = new ArrayList<>();
 
         int size = Math.max(existingItems.size(), itemBoardForm.getItems().size());
@@ -204,12 +201,10 @@ public class BoardController {
                     Item item = existingItems.get(i);
                     this.itemService.itemModify(item, itemForm.getName(), itemForm.getPrice(), itemForm.getStockquantity());
                     updatedItems.add(item);
-                    System.out.println("1. updatedItems === "+updatedItems);
                 } else {
                     // 새로운 아이템 추가
                     Item item = this.itemService.itemCreate(board, itemForm.getName(), itemForm.getPrice(), itemForm.getStockquantity());
                     updatedItems.add(item);
-                    System.out.println("2. updatedItems === "+updatedItems);
                 }
             } else {
                 // 기존 아이템 삭제
@@ -217,9 +212,7 @@ public class BoardController {
                 this.itemService.itemDelete(item);
             }
         }
-        System.out.println("3. updatedItems === "+updatedItems);
-        board.getItemList().clear();
-        board.getItemList().addAll(updatedItems);
+        board.setItemList(updatedItems);
         this.boardService.save(board);
 
         return String.format("redirect:/board/itemDetail/%s", id);

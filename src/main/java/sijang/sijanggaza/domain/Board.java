@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -30,7 +29,7 @@ public class Board {
     private List<Comment> commentList;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<Item> itemList = new ArrayList<>();
+    private List<Item> itemList;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private SiteUser author;

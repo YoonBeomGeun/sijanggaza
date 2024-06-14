@@ -1,5 +1,6 @@
 package sijang.sijanggaza.api;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,6 +34,7 @@ public class BoardApiController {
     /**
      * batch_fetch_size 미 설정 시 댓글에 대한 N+1 문제 발생
      */
+    @Operation(summary = "User 게시판 목록 조회", description = "파라미터로 받은 페이지를 불러옵니다.")
     @GetMapping("/api/v1_5/userBoards")
     public Page<UserBoardResponseDTO> getBoardListOfUserV1_5(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "kw", defaultValue = "") String kw) {
         Page<UserBoardResponseDTO> boardPage = this.boardService.getListOfUserV1_5(page, kw);

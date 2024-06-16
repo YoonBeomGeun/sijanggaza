@@ -244,10 +244,6 @@ public class BoardService {
 
 
 
-
-
-
-
     private Specification<Board> search(String kw) {
         return new Specification<>() {
             private static final long serialVersionUID = 1L;

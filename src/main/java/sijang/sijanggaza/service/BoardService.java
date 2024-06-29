@@ -21,6 +21,7 @@ import sijang.sijanggaza.repository.BoardRepository;
 import sijang.sijanggaza.repository.CommentRepository;
 import sijang.sijanggaza.repository.ItemRepository;
 import sijang.sijanggaza.repository.query.BoardQueryRepository;
+import sijang.sijanggaza.repository.query.BoardQuerydslRepository;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -34,6 +35,7 @@ public class BoardService {
     private final BoardQueryRepository boardQueryRepository;
     private final CommentRepository commentRepository;
     private final ItemRepository itemRepository;
+    private final BoardQuerydslRepository boardQuerydslRepository;
 
     public List<Board> getList() {
         return this.boardRepository.findAll();
@@ -52,6 +54,16 @@ public class BoardService {
         sorts.add(Sort.Order.desc("postDate"));
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
         Page<Board> boards = this.boardQueryRepository.findAllByKeywordOfUserV1_5(kw, pageable);
+        Page<UserBoardResponseDTO> boardsDTO = boards.map(UserBoardResponseDTO::new);
+        return boardsDTO;
+    }
+
+    //Querydsl 사용(1_5)
+    public Page<UserBoardResponseDTO> getListOfUserV1_5WithQuerydls(int page, String kw) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("postDate"));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
+        Page<Board> boards = this.boardQuerydslRepository.findAllByKeywordOfUserV1_5WithQuerydsl(kw, pageable);
         Page<UserBoardResponseDTO> boardsDTO = boards.map(UserBoardResponseDTO::new);
         return boardsDTO;
     }

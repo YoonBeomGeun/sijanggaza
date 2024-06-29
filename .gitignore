@@ -43,3 +43,6 @@ out
 gen
 .gradle
 build
+
+# Ignore QueryDSL Q classes
+src/main/java/generated/

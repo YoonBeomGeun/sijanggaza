@@ -114,7 +114,7 @@ public interface BoardQueryRepository extends JpaRepository<Board, Integer> {
 
 
     /**
-     * 상품 게시글 상세보기
+     * 상품 게시글 상세보기 (fetch join)
      */
     @Query("select b from Board b" +
             " left join fetch b.author" +

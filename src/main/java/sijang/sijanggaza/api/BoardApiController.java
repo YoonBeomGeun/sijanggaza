@@ -121,6 +121,9 @@ public class BoardApiController {
 
     /******************************************************상품 게시글************************************************************/
 
+    /**
+     * batch_fetch_size 미 설정 시 댓글, 상품에 대한 N+1 문제 발생
+     */
     @Operation(summary = "Ceo 게시판 목록 조회 v1.5", description = "파라미터로 받은 페이지를 불러옵니다.")
     @GetMapping("/api/v1_5/ceoBoards")
     public Page<CeoBoardResponseDTO> getBoardListOfCeoV1_5(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "kw", defaultValue = "") String kw) {

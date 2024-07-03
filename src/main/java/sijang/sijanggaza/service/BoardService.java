@@ -183,6 +183,7 @@ public class BoardService {
         }
     }
 
+    // 상품 게시글 상세보기 _ fetch join 적용
     public Board getBoardV2(Integer id) {
         Board board = this.boardQueryRepository.findByIdForDetail(id);
         if (board != null) {
